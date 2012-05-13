@@ -64,6 +64,8 @@ class StatusIcon:
         item.connect("leave_notify_event", self.leave_notify_event)
 
 
+        style = item.get_style().copy()
+        item.set_style(style)
 
         menu.append(item)
         #### END MODIFIED PART ####

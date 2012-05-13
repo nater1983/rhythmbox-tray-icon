@@ -40,7 +40,11 @@ if gtk.pygtk_version < (2, 0):
 allocHeight = 1
 allocWidth = 1
 
-BORDER_WIDTH = 5
+#BORDER_WIDTH = 5
+#PIXMAP_SIZE = 22
+#STAR_PIXMAP = ["22 22 77 1",
+
+BORDER_WIDTH = 2
 PIXMAP_SIZE = 22
 STAR_PIXMAP = ["22 22 77 1",
 " 	c None",
