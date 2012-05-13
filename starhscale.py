@@ -26,13 +26,10 @@ http://www.pygtk.org/articles/writing-a-custom-widget-using-pygtk/writing-a-cust
 
 try:
     import gtk
-    import gobject
     from gtk import gdk
 except:
     raise SystemExit
 
-
-import pygtk
 if gtk.pygtk_version < (2, 0):
     print "PyGtk 2.0 or later required for this widget"
     raise SystemExit
@@ -44,7 +41,7 @@ allocWidth = 1
 #PIXMAP_SIZE = 22
 #STAR_PIXMAP = ["22 22 77 1",
 
-BORDER_WIDTH = 2
+BORDER_WIDTH = 0
 PIXMAP_SIZE = 22
 STAR_PIXMAP = ["22 22 77 1",
 " 	c None",
@@ -151,6 +148,9 @@ class StarHScale(gtk.Widget):
     """A horizontal Scale Widget that attempts to mimic the star
     rating scheme used in iTunes"""
 
+
+    __gtype_name__ = 'StarHScale'
+
     def __init__(self, max_stars=5, stars=0):
         """Initialization, numstars is the total number
         of stars that may be visible, and stars is the current
@@ -178,7 +178,6 @@ class StarHScale(gtk.Widget):
         # Create a new gdk.Window which we can draw on.
         # Also say that we want to receive exposure events
         # and button click and button press events
-
 
         self.window = gtk.gdk.Window(
             self.get_parent_window(),
@@ -356,7 +355,7 @@ class StarHScale(gtk.Widget):
 
 if __name__ == "__main__":
     # register the class as a Gtk widget
-    gobject.type_register(StarHScale)
+    #gobject.type_register(StarHScale)
 
     win = gtk.Window()
     win.resize(400,60)
