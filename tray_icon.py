@@ -1,6 +1,5 @@
 from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject
 import cairo
-import traceback
 
 iconsPath = "/usr/share/icons/"
 rhythmboxIcon = iconsPath + "hicolor/32x32/apps/rhythmbox.png"
@@ -8,6 +7,7 @@ playIcon = iconsPath + "gnome/32x32/actions/media-playback-start.png"
 
 class TrayIcon(GObject.Object, Peas.Activatable):
 
+    proc = None
     __gtype_name = 'TrayIcon'
     object = GObject.property(type=GObject.Object)
 
@@ -31,40 +31,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     def previous(self, widget):
         self.player.do_previous()
 
-    def rateThread(self, rating):
-        tb = ''
-
-        try:
-            currentSongURI = self.shell.props.shell_player.get_playing_entry().get_playback_uri()
-            print "Setting rating for " + currentSongURI
-
-            from gi.repository import GLib, Gio
-            bus_type = Gio.BusType.SESSION
-            flags = 0
-            iface_info = None
-
-            print "Get Proxy"
-            proxy = Gio.DBusProxy.new_for_bus_sync(bus_type, flags, iface_info,
-                                                   "org.gnome.Rhythmbox3",
-                                                   "/org/gnome/Rhythmbox3/RhythmDB",
-                                                   "org.gnome.Rhythmbox3.RhythmDB", None)
-
-            print "Got proxy"
-            rating = float(rating)
-            vrating = GLib.Variant("d", rating)
-            print "SetEntryProperties"
-            proxy.SetEntryProperties("(sa{sv})", currentSongURI, {"rating": vrating})
-            print "Done"
-        except:
-                    tb = traceback.format_exc()
-        finally:
-                    print tb
-
-        return False
-
-    def rate(self, widget):
-        if self.shell.props.shell_player.get_playing_entry():
-            Gdk.threads_add_idle(100, self.rateThread, 3)
 
 
     def quit(self, widget):
@@ -97,7 +63,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
             <menuitem action='Previous' />
             <separator />
             <menuitem action='Quit' />
-            <separator />
           </popup>
         </ui>
         """)
@@ -113,6 +78,15 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.popup = ui.get_widget("/PopupMenu")
 
         ### Add rating star widget ###
+
+
+        import subprocess
+        self.proc = subprocess.Popen("/home/mendhak/.local/share/rhythmbox/plugins/statusicon.py")
+
+        #execfile('statusicon.py')
+
+        #ui.add_ui(ui.new_merge_id(), "/popup", "StarHScale", "StarAction", Gtk.UIManager.MENUITEM, False)
+
 
 
 
@@ -143,5 +117,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
                 self.nextItem(widget)
 
     def do_deactivate(self):
+        if self.proc:
+            self.proc.kill()
         self.icon.set_visible(False)
         del self.icon

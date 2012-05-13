@@ -19,7 +19,7 @@ class StatusIcon:
 
         window = gtk.Window()
         window.connect("destroy", lambda w: gtk.main_quit())
-        window.show_all()
+        #window.show_all()
 
     def get_song_uri(self):
 
