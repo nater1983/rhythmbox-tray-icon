@@ -1,5 +1,6 @@
 from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject
 import cairo
+import traceback
 
 iconsPath = "/usr/share/icons/"
 rhythmboxIcon = iconsPath + "hicolor/32x32/apps/rhythmbox.png"
@@ -30,7 +31,43 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 	def previous(self, widget):
 		self.player.do_previous()
 
- 	def quit(self, widget):
+	def rateThread(self, rating):
+		tb = ''
+
+		try:
+			currentSongURI = self.shell.props.shell_player.get_playing_entry().get_playback_uri()
+			print "Setting rating for " + currentSongURI
+
+			from gi.repository import GLib, Gio
+			bus_type = Gio.BusType.SESSION
+			flags = 0
+			iface_info = None
+
+			print "Get Proxy"
+			proxy = Gio.DBusProxy.new_for_bus_sync(bus_type, flags, iface_info,
+												   "org.gnome.Rhythmbox3",
+												   "/org/gnome/Rhythmbox3/RhythmDB",
+												   "org.gnome.Rhythmbox3.RhythmDB", None)
+
+			print "Got proxy"
+			rating = float(rating)
+			vrating = GLib.Variant("d", rating)
+			print "SetEntryProperties"
+			proxy.SetEntryProperties("(sa{sv})", currentSongURI, {"rating": vrating})
+			print "Done"
+		except:
+					tb = traceback.format_exc()
+		finally:
+					print tb
+
+		return False
+
+	def rate(self, widget):
+		if self.shell.props.shell_player.get_playing_entry():
+			Gdk.threads_add_idle(100, self.rateThread, 3)
+
+
+	def quit(self, widget):
 		self.shell.quit()
 
 	def hide_on_delete(self, widget, event):
@@ -60,6 +97,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 			<menuitem action='Previous' />
 			<separator />
 			<menuitem action='Quit' />
+			<separator />
 		  </popup>
 		</ui>
 		""")
@@ -69,11 +107,11 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 				("PlayPause",Gtk.STOCK_MEDIA_PLAY,"Play/Pause",None, None, self.play),
 				("Next",Gtk.STOCK_MEDIA_NEXT,"Next",None, None, self.nextItem),
 				("Previous",Gtk.STOCK_MEDIA_PREVIOUS,"Previous",None, None, self.previous),
-				("Quit",None,"Quit",None, None, self.quit)
+				("Quit",None,"Quit",None, None, self.quit),
 				])
 		ui.insert_action_group(ag)
 		self.popup = ui.get_widget("/PopupMenu")
-		
+
 		s1 = cairo.ImageSurface.create_from_png(rhythmboxIcon)
 		s2 = cairo.ImageSurface.create_from_png(playIcon)
 		ctx = cairo.Context(s1)
