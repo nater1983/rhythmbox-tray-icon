@@ -237,7 +237,7 @@ def SetupPlaybackStatusListener():
         mainloop = glib.MainLoop ()
         mainloop.run ()
     except:
-        print "Setup error"
+        print "Status Listener error"
         print sys.exc_info()
         pass
 
@@ -246,7 +246,7 @@ def SetupPlaybackStatusListener():
 
 
 import gobject
-gobject.timeout_add(2000, SetupPlaybackStatusListener)
+gobject.timeout_add(1000, SetupPlaybackStatusListener)
 
 s = StatusIcon()
 gtk.main()
