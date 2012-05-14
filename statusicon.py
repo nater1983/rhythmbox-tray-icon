@@ -4,6 +4,7 @@ from gi.repository import Gio, GLib
 import gtk
 import subprocess
 import sys
+
 import starhscale
 
 import dbus.mainloop.glib
@@ -162,23 +163,6 @@ class StatusIcon:
             sys.exit()
 
 
-    def OnPlaybackStatusChanged (self, sender, properties, sig):
-        if "PlaybackStatus" in properties:
-            print properties["PlaybackStatus"]
-
-
-    def SetupPlaybackStatusListener(self):
-        dbus.mainloop.glib.DBusGMainLoop (set_as_default = True)
-
-        bus = dbus.SessionBus ()
-
-        proxy = bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
-        player = dbus.Interface(proxy, 'org.freedesktop.DBus.Properties')
-        player.connect_to_signal("PropertiesChanged", self.OnPlaybackStatusChanged)
-
-        mainloop = glib.MainLoop ()
-        mainloop.run ()
-
     def OnShowPopupMenu(self, icon, button, time):
         menu = gtk.Menu()
 
@@ -226,5 +210,45 @@ class StatusIcon:
         else:
             return None
 
-StatusIcon()
+    def SetPlayingIcon(self, isPlaying):
+        print isPlaying
+
+
+
+def OnPlaybackStatusChanged (sender, properties, sig):
+    if properties and "PlaybackStatus" in properties:
+        if properties["PlaybackStatus"] == "Playing":
+            s.SetPlayingIcon(True)
+        else:
+            s.SetPlayingIcon(False)
+
+
+def SetupPlaybackStatusListener():
+    try:
+        print "Setup Playback Status Listener"
+        dbus.mainloop.glib.DBusGMainLoop (set_as_default = True)
+
+        bus = dbus.SessionBus ()
+
+        proxy = bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
+        player = dbus.Interface(proxy, 'org.freedesktop.DBus.Properties')
+        player.connect_to_signal("PropertiesChanged", OnPlaybackStatusChanged)
+
+        mainloop = glib.MainLoop ()
+        mainloop.run ()
+    except:
+        print "Setup error"
+        print sys.exc_info()
+        pass
+
+    return False
+
+
+
+import gobject
+gobject.timeout_add(2000, SetupPlaybackStatusListener)
+
+s = StatusIcon()
 gtk.main()
+
+
