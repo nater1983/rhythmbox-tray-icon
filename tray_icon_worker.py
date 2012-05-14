@@ -2,6 +2,7 @@
 import dbus
 from gi.repository import Gio, GLib
 import gtk
+import os
 import subprocess
 import sys
 
@@ -17,7 +18,8 @@ class StatusIcon:
 
     iconsPath = "/usr/share/icons/"
     rhythmboxIcon = iconsPath + "hicolor/32x32/apps/rhythmbox.png"
-    playIcon = iconsPath + "gnome/32x32/actions/media-playback-start.png"
+    #playIcon = iconsPath + "gnome/32x32/actions/media-playback-start.png"
+    playIcon = os.path.join(sys.path[0], "tray_playing.png")
 
     def __init__(self):
 
@@ -211,16 +213,29 @@ class StatusIcon:
             return None
 
     def SetPlayingIcon(self, isPlaying):
-        print isPlaying
+        if isPlaying:
+            self.statusicon.set_from_file(self.playIcon)
+        else:
+            self.statusicon.set_from_file(self.rhythmboxIcon)
+
+    def SetTooltip(self, message):
+        self.statusicon.set_tooltip(message)
 
 
 
 def OnPlaybackStatusChanged (sender, properties, sig):
+
+    if properties and "Metadata" in properties:
+        if "xesam:title" in properties["Metadata"]:
+            s.SetTooltip(properties["Metadata"]["xesam:title"])
+
     if properties and "PlaybackStatus" in properties:
         if properties["PlaybackStatus"] == "Playing":
             s.SetPlayingIcon(True)
         else:
             s.SetPlayingIcon(False)
+            s.SetTooltip("")
+
 
 
 def SetupPlaybackStatusListener():
