@@ -5,7 +5,7 @@ import gtk
 import subprocess
 import sys
 
-import starhscale
+import tray_icon_starwidget
 
 import dbus.mainloop.glib
 import glib
@@ -196,7 +196,7 @@ class StatusIcon:
         self.starValue =  self.GetSongRating()
 
         if self.starValue >= 0:
-            self.star = starhscale.StarHScale(5, self.starValue)
+            self.star = tray_icon_starwidget.StarHScale(5, self.starValue)
 
             ratingItem.add(self.star)
             ratingItem.connect("motion_notify_event", self.OnRatingMouseOver)

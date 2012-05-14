@@ -334,9 +334,9 @@ class StarHScale(gtk.Widget):
         """set the maximum number of stars"""
 
         if (self.max_stars != max_value):
-            """Save the old max incase it is less then the
-            current number of stars, in which case we will
-            have to redraw"""
+            #Save the old max incase it is less then the
+            #current number of stars, in which case we will
+            #have to redraw
 
             if (max_value > 0):
                 self.max_stars = max_value
@@ -344,8 +344,7 @@ class StarHScale(gtk.Widget):
                 self.sizes = []
                 for count in range(0,self.max_stars):
                     self.sizes.append((count * PIXMAP_SIZE) + BORDER_WIDTH)
-                """do we have to change the current number of
-                stars?"""
+                #do we have to change the current number of stars?
                 if (self.stars > self.max_stars):
                     self.set_value(self.max_stars)
 

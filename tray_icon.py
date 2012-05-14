@@ -10,7 +10,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     def do_activate(self):
         #Invoke the actual application
         #This is done because the actual rhythmbox environment is too restrictive
-        self.proc = subprocess.Popen("/home/mendhak/.local/share/rhythmbox/plugins/statusicon.py")
+        self.proc = subprocess.Popen("/home/mendhak/.local/share/rhythmbox/plugins/tray_icon_worker.py")
 
     def do_deactivate(self):
         if self.proc:
