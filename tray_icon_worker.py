@@ -1,19 +1,18 @@
 #!/usr/bin/python
+# coding=utf-8
 import dbus
 from gi.repository import Gio, GLib
 import gtk
 import os
 import subprocess
 import sys
-
-import tray_icon_starwidget
+import math
 
 import dbus.mainloop.glib
 import glib
 
 class StatusIcon:
 
-    star = None
     starValue = 0
 
     iconsPath = "/usr/share/icons/"
@@ -104,28 +103,6 @@ class StatusIcon:
                 print "Failed to set a rating"
 
 
-    def OnRatingMouseOver(self, widget, event):
-        # User moving over the stars, highlight stars accordingly
-        if event.is_hint:
-           x, y, state = event.window.get_pointer()
-        else:
-           x = event.x
-           y = event.y
-
-        self.star.check_for_new_stars(x-self.star.allocation.x)
-
-    def OnRatingClick(self, widget, event):
-        # User clicked on a star. Set the rating.
-        event.x = event.x - self.star.allocation.x
-        self.star.do_button_press_event(event)
-
-        self.starValue = self.star.stars
-        self.SetSongRating(self.starValue)
-
-    def OnRatingMouseOut(self, widget, event):
-        # Mouse left the star area, restore to original rating
-        self.star.set_value(self.starValue)
-
     def OnPlayPauseClick(self, widget):
         try:
             session_bus = dbus.SessionBus()
@@ -164,6 +141,44 @@ class StatusIcon:
         except:
             sys.exit()
 
+    def GetChosenStarsFromMousePosition(self, label, mouseX):
+        starWidth = int(label.get_layout().get_pixel_size()[0]/5)
+        chosen = math.ceil((mouseX-label.allocation.x)/starWidth)
+        if chosen <= 0:
+            chosen = 0
+
+        if chosen >= 5:
+            chosen = 5
+
+        return chosen
+
+    def OnStarClick(self, widget, event):
+        label = widget.get_children()[0]
+        self.starValue = self.GetChosenStarsFromMousePosition(label, event.x)
+        self.SetSongRating(self.starValue)
+
+    def OnStarMouseOut(self, widget, event):
+        label = widget.get_children()[0]
+        label.set_markup(self.GetStarsMarkup(self.starValue, 5))
+
+
+    def OnStarMouseOver(self, widget, event):
+        label = widget.get_children()[0]
+        label.set_markup(self.GetStarsMarkup(self.GetChosenStarsFromMousePosition(label,event.x), 5))
+
+    def GetStarsMarkup(self, filledStars, totalStars):
+        if filledStars is None or filledStars <= 0:
+                    filledStars = 0
+
+        if filledStars >= totalStars:
+            filledStars = totalStars
+
+        filledStars = int(math.ceil(filledStars))
+        totalStars = int(totalStars)
+
+        starString = '★' * filledStars + '☆' * (totalStars-filledStars)
+        return "<span size='x-large'>" + starString + "</span>"
+
 
     def OnShowPopupMenu(self, icon, button, time):
         menu = gtk.Menu()
@@ -173,9 +188,10 @@ class StatusIcon:
         prev = gtk.MenuItem("Prev")
         quit = gtk.MenuItem("Quit")
 
-        ratingItem = self.GetRatingWidget()
-        if ratingItem:
-            menu.append(ratingItem)
+
+        starItem = self.GetRatingStar()
+        if starItem:
+            menu.append(starItem)
 
         playpause.connect("activate", self.OnPlayPauseClick)
         next.connect("activate", self.OnNextClick)
@@ -188,29 +204,24 @@ class StatusIcon:
         menu.append(quit)
         menu.show_all()
 
-        #TODO, get DBus listener working
-        #self.SetupPlaybackStatusListener()
-
         menu.popup(None, None, gtk.status_icon_position_menu, button, time, self.statusicon)
 
-    def GetRatingWidget(self):
-        ratingItem = gtk.MenuItem()
+    def GetRatingStar(self):
+        starItem = gtk.MenuItem(self.GetStarsMarkup(0,5))
         self.starValue =  self.GetSongRating()
+        label = starItem.get_children()[0]
+        label.set_markup(self.GetStarsMarkup(self.starValue,5))
+
+        starItem.connect("motion_notify_event", self.OnStarMouseOver)
+        starItem.connect("button_press_event", self.OnStarClick)
+        starItem.connect("leave_notify_event", self.OnStarMouseOut)
 
         if self.starValue >= 0:
-            self.star = tray_icon_starwidget.StarHScale(5, self.starValue)
-
-            ratingItem.add(self.star)
-            ratingItem.connect("motion_notify_event", self.OnRatingMouseOver)
-            ratingItem.connect("button_press_event", self.OnRatingClick)
-            ratingItem.connect("leave_notify_event", self.OnRatingMouseOut)
-
-            style = ratingItem.get_style().copy()
-            ratingItem.set_style(style)
-
-            return ratingItem
+            return starItem
         else:
             return None
+
+
 
     def SetPlayingIcon(self, isPlaying):
         if isPlaying:
