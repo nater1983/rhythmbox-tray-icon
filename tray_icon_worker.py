@@ -21,7 +21,6 @@ class StatusIcon:
     playIcon = os.path.join(sys.path[0], "tray_playing.png")
 
     def __init__(self):
-
         self.statusicon = gtk.StatusIcon()
         #self.statusicon.set_from_stock(gtk.STOCK_MEDIA_PLAY)
         self.statusicon.set_from_file(self.rhythmboxIcon)
@@ -34,6 +33,9 @@ class StatusIcon:
         #window.show_all()
 
     def OnIconScroll(self, widget, event):
+        """
+        Method called when the mousewheel is scrolled over the icon. Changes the volume.
+        """
 
         if event.direction == 0:
             session_bus = dbus.SessionBus()
@@ -51,11 +53,17 @@ class StatusIcon:
             dbuspropiface.Set("org.mpris.MediaPlayer2.Player","Volume",vol)
 
     def OnIconClick(self, icon, event, data = None):
+        """
+        Method called when the icon is left clicked. Launches rhythmbox.
+        """
         if event.button == 1: # left button
             subprocess.call("rhythmbox")
 
 
     def GetSongURI(self):
+        """
+        Gets the file URI of the current song in Rhythmbox.
+        """
         try:
             bus = dbus.SessionBus()
             proxy = bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -67,6 +75,9 @@ class StatusIcon:
             return None
 
     def GetSongRating(self):
+        """
+        Gets the current song's user rating from Rhythmbox.
+        """
         try:
             bus = dbus.SessionBus()
             proxy = bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -82,28 +93,34 @@ class StatusIcon:
             return 0
 
     def SetSongRating(self, rating):
+        """
+        Sets the current song rating in Rhythmbox.
+        """
 
-            try:
-                currentSongURI = self.GetSongURI()
+        try:
+            currentSongURI = self.GetSongURI()
 
-                if currentSongURI:
+            if currentSongURI:
 
-                    busType = Gio.BusType.SESSION
-                    flags = 0
-                    ratingInterface = None
+                busType = Gio.BusType.SESSION
+                flags = 0
+                ratingInterface = None
 
-                    proxy = Gio.DBusProxy.new_for_bus_sync(busType, flags, ratingInterface,
-                                                           "org.gnome.Rhythmbox3",
-                                                           "/org/gnome/Rhythmbox3/RhythmDB",
-                                                           "org.gnome.Rhythmbox3.RhythmDB", None)
+                proxy = Gio.DBusProxy.new_for_bus_sync(busType, flags, ratingInterface,
+                                                       "org.gnome.Rhythmbox3",
+                                                       "/org/gnome/Rhythmbox3/RhythmDB",
+                                                       "org.gnome.Rhythmbox3.RhythmDB", None)
 
-                    variantRating = GLib.Variant("d", float(rating))
-                    proxy.SetEntryProperties("(sa{sv})", currentSongURI, {"rating": variantRating})
-            except:
-                print "Failed to set a rating"
+                variantRating = GLib.Variant("d", float(rating))
+                proxy.SetEntryProperties("(sa{sv})", currentSongURI, {"rating": variantRating})
+        except:
+            print "Failed to set a rating"
 
 
     def OnPlayPauseClick(self, widget):
+        """
+        Method called when the playpause menu item is clicked. Toggles the play-pause state of Rhythmbox.
+        """
         try:
             session_bus = dbus.SessionBus()
             player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -114,6 +131,9 @@ class StatusIcon:
 
 
     def OnNextClick(self, widget):
+        """
+        Method called when the next menu item is clicked.  Pays next song.
+        """
         try:
             session_bus = dbus.SessionBus()
             player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -123,6 +143,9 @@ class StatusIcon:
             print "Unable to go to next item, are you sure Rhythmbox is running?"
 
     def OnPreviousClick(self, widget):
+        """
+        Method called when the previous menu item is clicked. Plays previous song.
+        """
         try:
 
             session_bus = dbus.SessionBus()
@@ -133,6 +156,9 @@ class StatusIcon:
             print "Unable to go to previous item, are you sure Rhythmbox is running?"
 
     def OnQuitClick(self, widget):
+        """
+        Method called when the quit menu item is clicked. Quits rhythmbox.
+        """
         try:
             session_bus = dbus.SessionBus()
             player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -142,6 +168,9 @@ class StatusIcon:
             sys.exit()
 
     def GetChosenStarsFromMousePosition(self, label, mouseX):
+        """
+        Calculates the number of chosen stars to show based on the mouse's X position
+        """
         starWidth = int(label.get_layout().get_pixel_size()[0]/5)
         chosen = math.ceil((mouseX-label.allocation.x)/starWidth)
         if chosen <= 0:
@@ -153,20 +182,33 @@ class StatusIcon:
         return chosen
 
     def OnStarClick(self, widget, event):
+        """
+        Method called when stars are clicked on. Determines chosen stars and sets song rating.
+        """
         label = widget.get_children()[0]
         self.starValue = self.GetChosenStarsFromMousePosition(label, event.x)
         self.SetSongRating(self.starValue)
 
     def OnStarMouseOut(self, widget, event):
+        """
+        Method called when mouse leaves the rating stars. Resets stars to original value.
+        """
         label = widget.get_children()[0]
         label.set_markup(self.GetStarsMarkup(self.starValue, 5))
 
 
     def OnStarMouseOver(self, widget, event):
+        """
+        Method called when mouse hovers over the rating stars. Shows filled stars as mouse hovers.
+        """
         label = widget.get_children()[0]
         label.set_markup(self.GetStarsMarkup(self.GetChosenStarsFromMousePosition(label,event.x), 5))
 
     def GetStarsMarkup(self, filledStars, totalStars):
+        """
+        Gets the Pango Markup for the star rating label
+        """
+
         if filledStars is None or filledStars <= 0:
                     filledStars = 0
 
@@ -181,6 +223,9 @@ class StatusIcon:
 
 
     def OnShowPopupMenu(self, icon, button, time):
+        """
+        Called when the icon is right clicked, displays the menu
+        """
         menu = gtk.Menu()
 
         playpause = gtk.MenuItem("Play/Pause")
@@ -207,6 +252,7 @@ class StatusIcon:
         menu.popup(None, None, gtk.status_icon_position_menu, button, time, self.statusicon)
 
     def GetRatingStar(self):
+        """ Gets a gtk.MenuItem with the current song's ratings in filled stars """
         starItem = gtk.MenuItem(self.GetStarsMarkup(0,5))
         self.starValue =  self.GetSongRating()
         label = starItem.get_children()[0]
@@ -224,17 +270,25 @@ class StatusIcon:
 
 
     def SetPlayingIcon(self, isPlaying):
+        """
+        Sets the current icon to rhythmbox or a playing icon
+        """
         if isPlaying:
             self.statusicon.set_from_file(self.playIcon)
         else:
             self.statusicon.set_from_file(self.rhythmboxIcon)
 
     def SetTooltip(self, message):
+        """ Sets the tooltip of the icon """
         self.statusicon.set_tooltip(message)
 
 
 
 def OnPlaybackStatusChanged (sender, properties, sig):
+    """
+    Reads the current song title and sets the icon tooltip.
+    Reads the PlaybackStatus and changes the icon depending on play/pause status
+    """
 
     if properties and "Metadata" in properties:
         if "xesam:title" in properties["Metadata"]:
@@ -250,6 +304,10 @@ def OnPlaybackStatusChanged (sender, properties, sig):
 
 
 def SetupPlaybackStatusListener():
+    """
+        Sets up a playback status listener from Rhythmbox, which runs in a glib.MainLoop().
+        Calls OnPlaybackStatusChanged when the status changes
+    """
     try:
         print "Setup Playback Status Listener"
         dbus.mainloop.glib.DBusGMainLoop (set_as_default = True)
