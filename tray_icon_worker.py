@@ -7,12 +7,20 @@ import os
 import subprocess
 import sys
 import math
-
+import gobject
 import dbus.mainloop.glib
 import glib
 
 class StatusIcon:
 
+    """
+    A Python application which sits in the system tray and can control Rhythmbox.
+    Features: previous, next, play/pause, quit
+    Rate a song using the stars menu item
+    Scrolling over the icon increases or decreases the volume.
+    Mouseover the icon and it dispays a tooltip with the current song name.
+    Changes Rhythmbox tray icon when a song is playing.
+    """
     starValue = 0
 
     iconsPath = "/usr/share/icons/"
@@ -329,7 +337,7 @@ def SetupPlaybackStatusListener():
 
 
 
-import gobject
+
 gobject.timeout_add(1000, SetupPlaybackStatusListener)
 
 s = StatusIcon()
