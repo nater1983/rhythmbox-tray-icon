@@ -1,16 +1,34 @@
 Rhythmbox tray icon plugin
 ==========================
 
-Restores the tray icon functionality from the 0.x series. Requires 2.9+
+Restores the tray icon functionality from the 0.x series. Requires Rhythmbox 2.9+
+
+Tray icon, has a green 'play' when a song is playing:
+
+![Tray Icon](http://farm8.staticflickr.com/7232/7219610460_327356b800_o.png)
+
+
+When you hover over the icon, it shows the playing song:
+
+![Hover Icon](http://farm8.staticflickr.com/7102/7219610526_a2cd6e9f18_o.png)
+
 
 Install Procedure
 -----------------
+Copy this folder into ~/.local/share/rhythmbox/plugins.  If you want to be specific, copy all the tray_* files over:
 
-Copy this folder into ~/.local/share/rhythmbox/plugins, or install the debian package.
-If you don't use the package, you'll need the following other packages installed (the package does this for you FYI):
+    cp /home/mendhak/Code/rhythmbox-tray-icon/tray*.* ~/.local/share/rhythmbox/plugins/
 
-* gir1.2-rb-3.0
-* gir1.2-gtk-3.0
-* gir1.2-gdkpixbuf-2.0
-* python-cairo
-* gnome-icon-theme
+Start Rhythmbox.  Go to Edit > Plugins.
+
+Find 'Tray Icon' in the plugins list and enable it.  A Rhythmbox icon appears in the notification area.
+
+
+Uninstall Procedure
+-----------------
+
+To uninstall, remove the tray_* files from the plugins folder.
+
+    rm ~/.local/share/rhythmbox/plugins/tray*.*
+
+
