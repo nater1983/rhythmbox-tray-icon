@@ -1,19 +1,19 @@
 Rhythmbox tray icon plugin
 ==========================
 
-Restores the tray icon functionality from the 0.x series. Requires Rhythmbox 2.9+
+A tray icon to control basic Rhythmbox features. Requires Rhythmbox 2.9+
 
-Tray icon, has a green 'play' when a song is playing.
+Tray icon, has a green 'play' when a track is playing.
 
 ![Tray Icon](http://farm8.staticflickr.com/7232/7219610460_327356b800_o.png)
 
-You can rate the song, play/pause, go previous, go next, or quit.
+You can rate the track, play/pause, go previous, go next, or quit.
 
 Scroll up and down over the tray icon to adjust the Rhythmbox volume.
 
 Clicking directly on the tray icon will attempt to show the Rhythmbox window.
 
-When you hover over the icon, it shows the playing song:
+When you hover over the icon, it shows the playing track:
 
 ![Hover Icon](http://farm8.staticflickr.com/7102/7219610526_a2cd6e9f18_o.png)
 
@@ -39,3 +39,8 @@ To uninstall, remove the tray_* files from the plugins folder.
     rm ~/.local/share/rhythmbox/plugins/tray*.*
 
 
+**Notes**
+
+No .deb package yet, working on it.
+
+Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon).
