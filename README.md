@@ -3,9 +3,13 @@ Rhythmbox tray icon plugin
 
 Restores the tray icon functionality from the 0.x series. Requires Rhythmbox 2.9+
 
-Tray icon, has a green 'play' when a song is playing:
+Tray icon, has a green 'play' when a song is playing.
 
 ![Tray Icon](http://farm8.staticflickr.com/7232/7219610460_327356b800_o.png)
+
+You can rate the song, play/pause, go previous, go next, or quit.
+
+Clicking directly on the tray icon will attempt to show the Rhythmbox window.
 
 When you hover over the icon, it shows the playing song:
 
