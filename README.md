@@ -9,6 +9,8 @@ Tray icon, has a green 'play' when a song is playing.
 
 You can rate the song, play/pause, go previous, go next, or quit.
 
+Scroll up and down over the tray icon to adjust the Rhythmbox volume.
+
 Clicking directly on the tray icon will attempt to show the Rhythmbox window.
 
 When you hover over the icon, it shows the playing song:
