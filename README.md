@@ -5,6 +5,7 @@ Restores the tray icon functionality from the 0.x series. Requires Rhythmbox 2.9
 
 Tray icon, has a green 'play' when a song is playing:
 
+![Front end screenshot](https://github.com/mendhak/flickrsignature/raw/master/flkrme.png)
 ![Tray Icon](http://farm8.staticflickr.com/7232/7219610460_327356b800_o.png)
 
 
