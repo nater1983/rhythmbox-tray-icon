@@ -24,7 +24,7 @@ How to install
 To install, run these commands in a terminal window:
 
     wget https://github.com/mendhak/rhythmbox-tray-icon/raw/master/rhythmbox-tray-icon.zip
-    unzip -u rhythmbox-tray-icon.zip -d /home/mendhak/.local/share/rhythmbox/plugins
+    unzip -u rhythmbox-tray-icon.zip -d ~/.local/share/rhythmbox/plugins
 
 To do it manually, download [rhythmbox-tray-icon.zip](https://github.com/mendhak/rhythmbox-tray-icon/raw/master/rhythmbox-tray-icon.zip) and extract its contents into ~/.local/share/rhythmbox/plugins.
 
