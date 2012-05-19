@@ -43,4 +43,4 @@ To uninstall, remove the tray_* files from the plugins folder.
 
 No .deb package yet, working on it.
 
-Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon).
+Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon) plugin.
