@@ -227,7 +227,7 @@ class StatusIcon:
         totalStars = int(totalStars)
 
         starString = '★' * filledStars + '☆' * (totalStars-filledStars)
-        return "<span size='x-large'>" + starString + "</span>"
+        return "<span size='x-large' foreground='#000000'>" + starString + "</span>"
 
 
     def OnShowPopupMenu(self, icon, button, time):
@@ -265,6 +265,12 @@ class StatusIcon:
         self.starValue =  self.GetSongRating()
         label = starItem.get_children()[0]
         label.set_markup(self.GetStarsMarkup(self.starValue,5))
+
+        #Prevent background color when mouse hovers
+        style = starItem.get_style().copy ()
+        style.bg[gtk.STATE_SELECTED] = style.bg[gtk.STATE_NORMAL]
+
+        starItem.set_style(style)
 
         starItem.connect("motion_notify_event", self.OnStarMouseOver)
         starItem.connect("button_press_event", self.OnStarClick)
