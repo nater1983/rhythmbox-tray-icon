@@ -1,5 +1,7 @@
 from gi.repository import GObject, Peas
+import os
 import subprocess
+import sys
 
 
 class TrayIcon(GObject.Object, Peas.Activatable):
@@ -15,7 +17,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Invokes tray_icon_worker.py as the Rhythmbox environment is too restrictive to perform all the required functions.
         """
-        self.proc = subprocess.Popen("/home/mendhak/.local/share/rhythmbox/plugins/tray_icon_worker.py")
+        self.proc = subprocess.Popen(os.path.join(sys.path[0], "tray_icon_worker.py"))
+
 
     def do_deactivate(self):
         """
