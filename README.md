@@ -44,8 +44,11 @@ To uninstall, run this command in a terminal window:
 
 It will remove the tray_* files from the plugins folder.
 
-**Notes**
+Notes
+----------------
 
 There is no .deb package yet.
 
 Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon) plugin.
+
+This plugin depends on the "*MPRIS D-Bus Interface*" plugin in Rhythmbox, please ensure that it has been enabled.
