@@ -1,13 +1,11 @@
 #!/usr/bin/python
 # coding=utf-8
 import dbus
-from gi.repository import Gio, GLib
-import gtk
+from gi.repository import Gio, GLib, Gtk, GObject, Gdk
 import os
 import subprocess
 import sys
 import math
-import gobject
 import dbus.mainloop.glib
 import glib
 
@@ -29,15 +27,15 @@ class StatusIcon:
     playIcon = os.path.join(sys.path[0], "tray_playing.png")
 
     def __init__(self):
-        self.statusicon = gtk.StatusIcon()
+        self.statusicon = Gtk.StatusIcon()
         #self.statusicon.set_from_stock(gtk.STOCK_MEDIA_PLAY)
         self.statusicon.set_from_file(self.rhythmboxIcon)
         self.statusicon.connect("popup-menu", self.OnShowPopupMenu)
         self.statusicon.connect("button-press-event", self.OnIconClick)
         self.statusicon.connect("scroll-event", self.OnIconScroll)
 
-        window = gtk.Window()
-        window.connect("destroy", lambda w: gtk.main_quit())
+        window = Gtk.Window()
+        window.connect("destroy", lambda w: Gtk.main_quit())
         #window.show_all()
 
     def OnIconScroll(self, widget, event):
@@ -180,7 +178,7 @@ class StatusIcon:
         Calculates the number of chosen stars to show based on the mouse's X position
         """
         starWidth = int(label.get_layout().get_pixel_size()[0]/5)
-        chosen = math.ceil((mouseX-label.allocation.x)/starWidth)
+        chosen = math.ceil((mouseX-label.get_layout_offsets()[0])/starWidth)
         if chosen <= 0:
             chosen = 0
 
@@ -234,13 +232,12 @@ class StatusIcon:
         """
         Called when the icon is right clicked, displays the menu
         """
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
 
-        playpause = gtk.MenuItem("Play/Pause")
-        next = gtk.MenuItem("Next")
-        prev = gtk.MenuItem("Prev")
-        quit = gtk.MenuItem("Quit")
-
+        playpause = Gtk.MenuItem("Play/Pause")
+        next = Gtk.MenuItem("Next")
+        prev = Gtk.MenuItem("Prev")
+        quit = Gtk.MenuItem("Quit")
 
         starItem = self.GetRatingStar()
         if starItem:
@@ -257,20 +254,31 @@ class StatusIcon:
         menu.append(quit)
         menu.show_all()
 
-        menu.popup(None, None, gtk.status_icon_position_menu, button, time, self.statusicon)
+        self.SetMenuCss()
+
+        menu.popup(None, None, lambda w,x: self.statusicon.position_menu(menu, self.statusicon), self.statusicon, 3, time)
+
+    def SetMenuCss(self):
+        #Prevent background color when mouse hovers
+        screen = Gdk.Screen.get_default()
+        css_provider = Gtk.CssProvider()
+
+        #The only way I could do it: Re-set bg, border colors, causing menuitem to 'expand', then set the :hover colors with unico
+        #Also strange, background-color is ignored, but background is not.
+        css_provider.load_from_data("GtkMenuItem { border:@bg_color; background:@bg_color; } GtkMenuItem:hover { background:@selected_bg_color; } GtkWidget{ border: @bg_color; } #starMenu:hover { color:@fg_color;background: @bg_color; -unico-inner-stroke-width: 0; }")
+
+        context = Gtk.StyleContext()
+        context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
 
     def GetRatingStar(self):
-        """ Gets a gtk.MenuItem with the current song's ratings in filled stars """
-        starItem = gtk.MenuItem(self.GetStarsMarkup(0,5))
+        """ Gets a Gtk.MenuItem with the current song's ratings in filled stars """
+        starItem = Gtk.MenuItem(self.GetStarsMarkup(0,5))
         self.starValue =  self.GetSongRating()
         label = starItem.get_children()[0]
         label.set_markup(self.GetStarsMarkup(self.starValue,5))
 
-        #Prevent background color when mouse hovers
-        style = starItem.get_style().copy ()
-        style.bg[gtk.STATE_SELECTED] = style.bg[gtk.STATE_NORMAL]
-
-        starItem.set_style(style)
+        starItem.set_name('starMenu')
 
         starItem.connect("motion_notify_event", self.OnStarMouseOver)
         starItem.connect("button_press_event", self.OnStarClick)
@@ -280,8 +288,6 @@ class StatusIcon:
             return starItem
         else:
             return None
-
-
 
     def SetPlayingIcon(self, isPlaying):
         """
@@ -294,7 +300,8 @@ class StatusIcon:
 
     def SetTooltip(self, message):
         """ Sets the tooltip of the icon """
-        self.statusicon.set_tooltip(message)
+        self.statusicon.set_tooltip_text(message)
+
 
 
 
@@ -323,7 +330,6 @@ def SetupPlaybackStatusListener():
         Calls OnPlaybackStatusChanged when the status changes
     """
     try:
-        print "Setup Playback Status Listener"
         dbus.mainloop.glib.DBusGMainLoop (set_as_default = True)
 
         bus = dbus.SessionBus ()
@@ -335,7 +341,7 @@ def SetupPlaybackStatusListener():
         mainloop = glib.MainLoop ()
         mainloop.run ()
     except:
-        print "Status Listener error"
+        print "Can't get playback status, tray icon will not change. Error is:"
         print sys.exc_info()
         pass
 
@@ -344,9 +350,9 @@ def SetupPlaybackStatusListener():
 
 
 
-gobject.timeout_add(1000, SetupPlaybackStatusListener)
+GObject.timeout_add(1000, SetupPlaybackStatusListener)
 
 s = StatusIcon()
-gtk.main()
+Gtk.main()
 
 
