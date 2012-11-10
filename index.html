@@ -72,7 +72,8 @@ unzip -u rhythmbox-tray-icon.zip -d ~/.local/share/rhythmbox/plugins
 
 <h2>Notes</h2>
 
-<p>There is no .deb package yet.</p>
+<p>If the icon does not appear on Ubuntu, whitelist the systray and restart Rhythmbox:</p>
+            <pre><code>gsettings set com.canonical.Unity.Panel systray-whitelist "['all']"</code></pre>
 
 <p>Heavily modified from <a href="https://github.com/palfrey/rhythmbox-tray-icon">palfrey's original</a> plugin.</p>
 <p>This plugin depends on the "<em>MPRIS D-Bus Interface</em>" plugin in Rhythmbox, please ensure that it has been enabled.</p>
