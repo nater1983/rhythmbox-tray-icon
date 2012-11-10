@@ -47,7 +47,9 @@ It will remove the tray_* files from the plugins folder.
 Notes
 ----------------
 
-There is no .deb package yet.
+On Ubuntu, you will need to allow applications in your systray
+
+    gsettings set com.canonical.Unity.Panel systray-whitelist "['all']"
 
 Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon) plugin.
 
