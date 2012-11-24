@@ -220,6 +220,9 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         if vol <= 0:
             vol = 0
 
+        if vol >=1:
+            vol = 1
+
         self.player.set_volume(vol)
 
 
