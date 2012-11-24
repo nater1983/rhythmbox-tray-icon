@@ -2,7 +2,6 @@
 Loader=python
 Module=tray_icon
 IAge=2
-Depends=mpris
 Name=Tray Icon
 Description=Tray Icon
 Authors=Mendhak <rhythmboxtray@mendhak.com>
