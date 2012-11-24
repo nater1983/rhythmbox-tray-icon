@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding=utf-8
 import dbus
-from gi.repository import Gio, GLib, Gtk, GObject, Gdk
+from gi.repository import Gio, GLib, Gtk, GObject, Gdk, RB
 import os
 import subprocess
 import sys

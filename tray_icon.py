@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding=utf-8
 
-from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject
+from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject, RB
 import os
 import sys
 import math
@@ -27,35 +27,35 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Called when the icon is right clicked, displays the menu
         """
-
-        if not self.menu:
-            self.menu = Gtk.Menu()
-
-            playpause = Gtk.MenuItem("Play/Pause")
-            next = Gtk.MenuItem("Nexto")
-            prev = Gtk.MenuItem("Prevo")
-            quit = Gtk.MenuItem("Quito")
-
-            starItem = self.GetRatingStar()
-            if starItem:
-               self.menu.append(starItem)
-
-            playpause.connect("activate", self.play)
-            next.connect("activate", self.nextItem)
-            prev.connect("activate", self.previous)
-            quit.connect("activate", self.quit)
-
-            self.menu.append(playpause)
-            self.menu.append(next)
-            self.menu.append(prev)
-            self.menu.append(quit)
-            self.menu.show_all()
-
-            self.SetMenuCss()
-
+        self.CreatePopupMenu()
         self.menu.popup(None, None, lambda w,x: self.icon.position_menu(self.menu, self.icon), self.icon, 3, time)
 
+    def CreatePopupMenu(self):
+        if not self.menu:
+            self.SetMenuCss()
 
+        self.menu = Gtk.Menu()
+
+        playpause = Gtk.MenuItem("Play/Pause")
+        next = Gtk.MenuItem("Next")
+        prev = Gtk.MenuItem("Prev")
+        quit = Gtk.MenuItem("Quit")
+
+        starItem = self.GetRatingStar()
+        if starItem:
+           self.menu.append(starItem)
+
+        playpause.connect("activate", self.play)
+        next.connect("activate", self.nextItem)
+        prev.connect("activate", self.previous)
+        quit.connect("activate", self.quit)
+
+        self.menu.append(playpause)
+        self.menu.append(next)
+        self.menu.append(prev)
+        self.menu.append(quit)
+
+        self.menu.show_all()
 
     def SetMenuCss(self):
         #Prevent background color when mouse hovers
@@ -73,7 +73,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     def GetRatingStar(self):
         """ Gets a Gtk.MenuItem with the current song's ratings in filled stars """
         starItem = Gtk.MenuItem(self.GetStarsMarkup(0,5))
-        self.starValue =  5
+        self.starValue =  self.GetSongRating()
         label = starItem.get_children()[0]
         label.set_markup(self.GetStarsMarkup(self.starValue,5))
 
@@ -88,6 +88,17 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         else:
             return None
 
+    def GetSongRating(self):
+        """
+        Gets the current song's user rating from Rhythmbox.
+        """
+        currentEntry = self.shell.props.shell_player.get_playing_entry()
+
+        if currentEntry:
+            return int(currentEntry.get_double(RB.RhythmDBPropType.RATING))
+        else:
+            return -1
+
     def OnStarClick(self, widget, event):
         """
         Method called when stars are clicked on. Determines chosen stars and sets song rating.
@@ -101,6 +112,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         Sets the current song rating in Rhythmbox.
         """
         print "Rating:", rating
+        currentEntry = self.shell.props.shell_player.get_playing_entry()
+        self.db.entry_set(currentEntry, RB.RhythmDBPropType.RATING, rating)
 #        try:
 #            currentSongURI = self.GetSongURI()
 #
@@ -201,8 +214,10 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.shell = self.object
         self.wind = self.shell.get_property("window")
         self.player = self.shell.props.shell_player
+        self.db = self.shell.props.db
 
         self.wind.connect("delete-event", self.hide_on_delete)
+        self.CreatePopupMenu()
 
 #        ui = Gtk.UIManager()
 #        ui.add_ui_from_string(
