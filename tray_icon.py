@@ -185,13 +185,23 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         return True # don't actually delete
 
     def set_playing_icon(self, player, playing):
+
+        tooltipText = ""
+
         if playing:
             self.icon.set_from_file(self.playIcon)
             currentEntry = self.shell.props.shell_player.get_playing_entry()
-            self.icon.set_tooltip_text(currentEntry.get_string(RB.RhythmDBPropType.TITLE))
+            self.set_tooltip_text(currentEntry.get_string(RB.RhythmDBPropType.ARTIST) + " - " + currentEntry.get_string(RB.RhythmDBPropType.TITLE))
         else:
             self.icon.set_from_file(self.rhythmboxIcon)
-            self.icon.set_tooltip_text("")
+            self.set_tooltip_text()
+
+    def set_tooltip_text(self, message=""):
+        prepend = ""
+        if len(message) > 0:
+            prepend = "\r\n"
+        tooltipText = message + prepend + "(Scroll = volume, click = visibility)"
+        self.icon.set_tooltip_text(tooltipText)
 
     def do_activate(self):
         self.shell = self.object
@@ -208,6 +218,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.icon.connect("popup-menu", self.popup_menu)
         self.icon.connect("button-press-event", self.toggle)
         self.player.connect("playing-changed", self.set_playing_icon)
+
+        self.set_tooltip_text()
 
     def scroll(self, widget, event):
         vol = round(self.player.get_volume()[1],1)
