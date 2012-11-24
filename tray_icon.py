@@ -17,13 +17,11 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
     iconsPath = "/usr/share/icons/"
     rhythmboxIcon = iconsPath + "hicolor/32x32/apps/rhythmbox.png"
-    #playIcon = iconsPath + "gnome/32x32/actions/media-playback-start.png"
     playIcon = os.path.join(sys.path[0], "tray_playing.png")
     menu = None
 
 
     def popup_menu(self, icon, button, time, data = None):
-        #self.popup.popup(None, None, None, None, button, time)
         """
         Called when the icon is right clicked, displays the menu
         """
@@ -114,25 +112,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         currentEntry = self.shell.props.shell_player.get_playing_entry()
         self.db.entry_set(currentEntry, RB.RhythmDBPropType.RATING, rating)
 
-#        try:
-#            currentSongURI = self.GetSongURI()
-#
-#            if currentSongURI:
-#
-#                busType = Gio.BusType.SESSION
-#                flags = 0
-#                ratingInterface = None
-#
-#                proxy = Gio.DBusProxy.new_for_bus_sync(busType, flags, ratingInterface,
-#                                                       "org.gnome.Rhythmbox3",
-#                                                       "/org/gnome/Rhythmbox3/RhythmDB",
-#                                                       "org.gnome.Rhythmbox3.RhythmDB", None)
-#
-#                variantRating = GLib.Variant("d", float(rating))
-#                proxy.SetEntryProperties("(sa{sv})", currentSongURI, {"rating": variantRating})
-#        except:
-#            print "Failed to set a rating"
-
 
     def GetChosenStarsFromMousePosition(self, label, mouseX):
         """
@@ -207,8 +186,11 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     def set_playing_icon(self, player, playing):
         if playing:
             self.icon.set_from_file(self.playIcon)
+            currentEntry = self.shell.props.shell_player.get_playing_entry()
+            self.icon.set_tooltip_text(currentEntry.get_string(RB.RhythmDBPropType.TITLE))
         else:
             self.icon.set_from_file(self.rhythmboxIcon)
+            self.icon.set_tooltip_text("")
 
     def do_activate(self):
         self.shell = self.object
@@ -219,38 +201,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.wind.connect("delete-event", self.hide_on_delete)
         self.CreatePopupMenu()
 
-#        ui = Gtk.UIManager()
-#        ui.add_ui_from_string(
-#        """
-#        <ui>
-#          <popup name='PopupMenu'>
-#            <menuitem action='PlayPause' />
-#            <menuitem action='Next' />
-#            <menuitem action='Previous' />
-#            <separator />
-#            <menuitem action='Quit' />
-#          </popup>
-#        </ui>
-#        """)
-
-#        ag = Gtk.ActionGroup("actions")
-#        ag.add_actions([
-#                ("PlayPause",Gtk.STOCK_MEDIA_PLAY,"Play/Pause",None, None, self.play),
-#                ("Next",Gtk.STOCK_MEDIA_NEXT,"Next",None, None, self.nextItem),
-#                ("Previous",Gtk.STOCK_MEDIA_PREVIOUS,"Previous",None, None, self.previous),
-#                ("Quit",None,"Quit",None, None, self.quit)
-#                ])
-#        ui.insert_action_group(ag)
-#        self.popup = ui.get_widget("/PopupMenu")
-
-#        s1 = cairo.ImageSurface.create_from_png(rhythmboxIcon)
-#        s2 = cairo.ImageSurface.create_from_png(playIcon)
-#        ctx = cairo.Context(s1)
-#        ctx.set_source_surface(s2, 0, 0)
-#        ctx.paint()
-#        self.playIcon = Gdk.pixbuf_get_from_surface(s1, 0, 0, s1.get_width(), s1.get_height())
-
-        self.normalIcon = GdkPixbuf.Pixbuf.new_from_file(rhythmboxIcon)
         self.icon =  Gtk.StatusIcon()
         self.icon.set_from_file(self.rhythmboxIcon)
         self.icon.connect("scroll-event", self.scroll)
