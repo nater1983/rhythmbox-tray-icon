@@ -6,57 +6,63 @@ import os
 import sys
 import math
 
-iconsPath = "/usr/share/icons/"
-rhythmboxIcon = iconsPath + "hicolor/32x32/apps/rhythmbox.png"
-playIcon = iconsPath + "gnome/32x32/actions/media-playback-start.png"
 
 class TrayIcon(GObject.Object, Peas.Activatable):
 
     __gtype_name = 'TrayIcon'
     object = GObject.property(type=GObject.Object)
 
-    starValue = 0
-    iconsPath = "/usr/share/icons/"
-    rhythmboxIcon = iconsPath + "hicolor/32x32/apps/rhythmbox.png"
-    playIcon = os.path.join(sys.path[0], "tray_playing.png")
+    star_value = 0
+    icons_path = "/usr/share/icons/"
+    rhythmbox_icon = icons_path + "hicolor/32x32/apps/rhythmbox.png"
+    play_icon = os.path.join(sys.path[0], "tray_playing.png")
     menu = None
 
 
-    def popup_menu(self, icon, button, time, data = None):
+    def show_popup_menu(self, icon, button, time, data = None):
         """
         Called when the icon is right clicked, displays the menu
         """
-        self.CreatePopupMenu()
+        self.create_popup_menu()
         self.menu.popup(None, None, lambda w,x: self.icon.position_menu(self.menu, self.icon), self.icon, 3, time)
 
-    def CreatePopupMenu(self):
+    def create_popup_menu(self):
+
+        """
+        Creates menu items for popup menu, including star rating
+        """
+
         if not self.menu:
-            self.SetMenuCss()
+            self.set_menu_css()
 
         self.menu = Gtk.Menu()
 
-        playpause = Gtk.MenuItem("Play/Pause")
-        next = Gtk.MenuItem("Next")
-        prev = Gtk.MenuItem("Prev")
-        quit = Gtk.MenuItem("Quit")
+        menuitem_playpause = Gtk.MenuItem("Play/Pause")
+        menuitem_next = Gtk.MenuItem("Next")
+        menuitem_prev = Gtk.MenuItem("Prev")
+        menuitem_quit = Gtk.MenuItem("Quit")
 
-        starItem = self.GetRatingStar()
-        if starItem:
-           self.menu.append(starItem)
+        menuitem_star = self.get_rating_star()
+        if menuitem_star:
+           self.menu.append(menuitem_star)
 
-        playpause.connect("activate", self.play)
-        next.connect("activate", self.nextItem)
-        prev.connect("activate", self.previous)
-        quit.connect("activate", self.quit)
+        menuitem_playpause.connect("activate", self.play)
+        menuitem_next.connect("activate", self.next)
+        menuitem_prev.connect("activate", self.previous)
+        menuitem_quit.connect("activate", self.quit)
 
-        self.menu.append(playpause)
-        self.menu.append(next)
-        self.menu.append(prev)
-        self.menu.append(quit)
+        self.menu.append(menuitem_playpause)
+        self.menu.append(menuitem_next)
+        self.menu.append(menuitem_prev)
+        self.menu.append(menuitem_quit)
 
         self.menu.show_all()
 
-    def SetMenuCss(self):
+    def set_menu_css(self):
+        """
+        Sets style for popup menu, hides hover background for stars
+        """
+
         #Prevent background color when mouse hovers
         screen = Gdk.Screen.get_default()
         css_provider = Gtk.CssProvider()
@@ -69,57 +75,60 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
-    def GetRatingStar(self):
-        """ Gets a Gtk.MenuItem with the current song's ratings in filled stars """
-        starItem = Gtk.MenuItem(self.GetStarsMarkup(0,5))
-        self.starValue =  self.GetSongRating()
-        label = starItem.get_children()[0]
-        label.set_markup(self.GetStarsMarkup(self.starValue,5))
+    def get_rating_star(self):
+        """
+        Gets a Gtk.MenuItem with the current song's ratings in filled stars
+        """
 
-        starItem.set_name('starMenu')
+        menuitem_star = Gtk.MenuItem(self.get_stars_markup(0,5))
+        self.star_value =  self.get_song_rating()
+        label = menuitem_star.get_children()[0]
+        label.set_markup(self.get_stars_markup(self.star_value,5))
 
-        starItem.connect("motion_notify_event", self.OnStarMouseOver)
-        starItem.connect("button_press_event", self.OnStarClick)
-        starItem.connect("leave_notify_event", self.OnStarMouseOut)
+        menuitem_star.set_name('starMenu')
 
-        if self.starValue >= 0:
-            return starItem
+        menuitem_star.connect("motion_notify_event", self.on_star_mouseover)
+        menuitem_star.connect("button_press_event", self.on_star_click)
+        menuitem_star.connect("leave_notify_event", self.on_star_mouseout)
+
+        if self.star_value >= 0:
+            return menuitem_star
         else:
             return None
 
-    def GetSongRating(self):
+    def get_song_rating(self):
         """
         Gets the current song's user rating from Rhythmbox.
         """
-        currentEntry = self.shell.props.shell_player.get_playing_entry()
+        current_entry = self.shell.props.shell_player.get_playing_entry()
 
-        if currentEntry:
-            return int(currentEntry.get_double(RB.RhythmDBPropType.RATING))
+        if current_entry:
+            return int(current_entry.get_double(RB.RhythmDBPropType.RATING))
         else:
             return -1
 
-    def OnStarClick(self, widget, event):
+    def on_star_click(self, widget, event):
         """
         Method called when stars are clicked on. Determines chosen stars and sets song rating.
         """
         label = widget.get_children()[0]
-        self.starValue = self.GetChosenStarsFromMousePosition(label, event.x)
-        self.SetSongRating(self.starValue)
+        self.star_value = self.get_chosen_stars(label, event.x)
+        self.set_song_rating(self.star_value)
 
-    def SetSongRating(self, rating):
+    def set_song_rating(self, rating):
         """
         Sets the current song rating in Rhythmbox.
         """
-        currentEntry = self.shell.props.shell_player.get_playing_entry()
-        self.db.entry_set(currentEntry, RB.RhythmDBPropType.RATING, rating)
+        current_entry = self.shell.props.shell_player.get_playing_entry()
+        self.db.entry_set(current_entry, RB.RhythmDBPropType.RATING, rating)
 
 
-    def GetChosenStarsFromMousePosition(self, label, mouseX):
+    def get_chosen_stars(self, label, mouseX):
         """
         Calculates the number of chosen stars to show based on the mouse's X position
         """
-        starWidth = int(label.get_layout().get_pixel_size()[0]/5)
-        chosen = math.ceil((mouseX-label.get_layout_offsets()[0])/starWidth)
+        star_width = int(label.get_layout().get_pixel_size()[0]/5)
+        chosen = math.ceil((mouseX-label.get_layout_offsets()[0])/star_width)
         if chosen <= 0:
             chosen = 0
 
@@ -128,39 +137,42 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
         return chosen
 
-    def OnStarMouseOut(self, widget, event):
+    def on_star_mouseout(self, widget, event):
         """
         Method called when mouse leaves the rating stars. Resets stars to original value.
         """
         label = widget.get_children()[0]
-        label.set_markup(self.GetStarsMarkup(self.starValue, 5))
+        label.set_markup(self.get_stars_markup(self.star_value, 5))
 
 
-    def OnStarMouseOver(self, widget, event):
+    def on_star_mouseover(self, widget, event):
         """
         Method called when mouse hovers over the rating stars. Shows filled stars as mouse hovers.
         """
         label = widget.get_children()[0]
-        label.set_markup(self.GetStarsMarkup(self.GetChosenStarsFromMousePosition(label,event.x), 5))
+        label.set_markup(self.get_stars_markup(self.get_chosen_stars(label,event.x), 5))
 
-    def GetStarsMarkup(self, filledStars, totalStars):
+    def get_stars_markup(self, filled_stars, total_stars):
         """
         Gets the Pango Markup for the star rating label
         """
 
-        if filledStars is None or filledStars <= 0:
-                    filledStars = 0
+        if filled_stars is None or filled_stars <= 0:
+                    filled_stars = 0
 
-        if filledStars >= totalStars:
-            filledStars = totalStars
+        if filled_stars >= total_stars:
+            filled_stars = total_stars
 
-        filledStars = int(math.ceil(filledStars))
-        totalStars = int(totalStars)
+        filled_stars = int(math.ceil(filled_stars))
+        total_stars = int(total_stars)
 
-        starString = '★' * filledStars + '☆' * (totalStars-filledStars)
+        starString = '★' * filled_stars + '☆' * (total_stars-filled_stars)
         return "<span size='x-large' foreground='#000000'>" + starString + "</span>"
 
-    def toggle(self, icon, event, data = None):
+    def toggle_player_visibility(self, icon, event, data = None):
+        """
+        Toggles visibility of Rhythmbox player
+        """
         if event.button == 1: # left button
             if self.wind.get_visible():
                 self.wind.hide()
@@ -169,59 +181,81 @@ class TrayIcon(GObject.Object, Peas.Activatable):
                 self.wind.present()
 
     def play(self, widget):
+        """
+        Starts playing
+        """
         self.player.playpause(True) # does nothing argument
 
-    def nextItem(self, widget):
+    def next(self, widget):
+        """
+        Goes to next song
+        """
         self.player.do_next()
 
     def previous(self, widget):
+        """
+        Goes to previous song
+        """
         self.player.do_previous()
 
     def quit(self, widget):
+        """
+        Exits Rhythmbox
+        """
         self.shell.quit()
 
     def hide_on_delete(self, widget, event):
         self.wind.hide()
         return True # don't actually delete
 
-    def set_playing_icon(self, player, playing):
-
-        tooltipText = ""
+    def on_playing_changed(self, player, playing):
+        """
+        Sets icon and tooltip when playing status changes
+        """
 
         if playing:
-            self.icon.set_from_file(self.playIcon)
-            currentEntry = self.shell.props.shell_player.get_playing_entry()
-            self.set_tooltip_text(currentEntry.get_string(RB.RhythmDBPropType.ARTIST) + " - " + currentEntry.get_string(RB.RhythmDBPropType.TITLE))
+            self.icon.set_from_file(self.play_icon)
+            current_entry = self.shell.props.shell_player.get_playing_entry()
+            self.set_tooltip_text(current_entry.get_string(RB.RhythmDBPropType.ARTIST) + " - " + current_entry.get_string(RB.RhythmDBPropType.TITLE))
         else:
-            self.icon.set_from_file(self.rhythmboxIcon)
+            self.icon.set_from_file(self.rhythmbox_icon)
             self.set_tooltip_text()
 
     def set_tooltip_text(self, message=""):
+        """
+        Sets tooltip to given message
+        """
         prepend = ""
         if len(message) > 0:
             prepend = "\r\n"
-        tooltipText = message + prepend + "(Scroll = volume, click = visibility)"
-        self.icon.set_tooltip_text(tooltipText)
+        tooltip_text = message + prepend + "(Scroll = volume, click = visibility)"
+        self.icon.set_tooltip_text(tooltip_text)
 
     def do_activate(self):
+        """
+        Called when the plugin is activated
+        """
         self.shell = self.object
         self.wind = self.shell.get_property("window")
         self.player = self.shell.props.shell_player
         self.db = self.shell.props.db
 
         self.wind.connect("delete-event", self.hide_on_delete)
-        self.CreatePopupMenu()
+        self.create_popup_menu()
 
         self.icon =  Gtk.StatusIcon()
-        self.icon.set_from_file(self.rhythmboxIcon)
-        self.icon.connect("scroll-event", self.scroll)
-        self.icon.connect("popup-menu", self.popup_menu)
-        self.icon.connect("button-press-event", self.toggle)
-        self.player.connect("playing-changed", self.set_playing_icon)
+        self.icon.set_from_file(self.rhythmbox_icon)
+        self.icon.connect("scroll-event", self.on_scroll)
+        self.icon.connect("popup-menu", self.show_popup_menu)
+        self.icon.connect("button-press-event", self.toggle_player_visibility)
+        self.player.connect("playing-changed", self.on_playing_changed)
 
         self.set_tooltip_text()
 
-    def scroll(self, widget, event):
+    def on_scroll(self, widget, event):
+        """
+        Lowers or raises Rhythmbox's volume
+        """
         vol = round(self.player.get_volume()[1],1)
 
         if event.direction == Gdk.ScrollDirection.UP:
@@ -239,5 +273,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
 
     def do_deactivate(self):
+        """
+        Called when plugin is deactivated
+        """
         self.icon.set_visible(False)
         del self.icon
