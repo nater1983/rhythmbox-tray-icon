@@ -111,9 +111,9 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Sets the current song rating in Rhythmbox.
         """
-        print "Rating:", rating
         currentEntry = self.shell.props.shell_player.get_playing_entry()
         self.db.entry_set(currentEntry, RB.RhythmDBPropType.RATING, rating)
+
 #        try:
 #            currentSongURI = self.GetSongURI()
 #
