@@ -12,22 +12,19 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     __gtype_name = 'TrayIcon'
     object = GObject.property(type=GObject.Object)
 
-    star_value = 0
-    icons_path = "/usr/share/icons/"
-    rhythmbox_icon = icons_path + "hicolor/32x32/apps/rhythmbox.png"
+    rhythmbox_icon = "/usr/share/icons/hicolor/32x32/apps/rhythmbox.png"
     play_icon = os.path.join(sys.path[0], "tray_playing.png")
     menu = None
-
 
     def show_popup_menu(self, icon, button, time, data = None):
         """
         Called when the icon is right clicked, displays the menu
         """
+
         self.create_popup_menu()
         self.menu.popup(None, None, lambda w,x: self.icon.position_menu(self.menu, self.icon), self.icon, 3, time)
 
     def create_popup_menu(self):
-
         """
         Creates menu items for popup menu, including star rating
         """
@@ -42,7 +39,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         menuitem_prev = Gtk.MenuItem("Prev")
         menuitem_quit = Gtk.MenuItem("Quit")
 
-        menuitem_star = self.get_rating_star()
+        menuitem_star = self.get_rating_menuitem()
         if menuitem_star:
            self.menu.append(menuitem_star)
 
@@ -75,7 +72,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
-    def get_rating_star(self):
+    def get_rating_menuitem(self):
         """
         Gets a Gtk.MenuItem with the current song's ratings in filled stars
         """
