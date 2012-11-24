@@ -15,6 +15,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     __gtype_name = 'TrayIcon'
     object = GObject.property(type=GObject.Object)
 
+    starValue = 0
     iconsPath = "/usr/share/icons/"
     rhythmboxIcon = iconsPath + "hicolor/32x32/apps/rhythmbox.png"
     playIcon = os.path.join(sys.path[0], "tray_playing.png")
@@ -209,13 +210,18 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.player.connect("playing-changed", self.set_playing_icon)
 
     def scroll(self, widget, event):
-        if self.player.playpause(True):
-            # scroll up for previous track
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.previous(widget)
-            # scroll down for next track
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.nextItem(widget)
+        vol = round(self.player.get_volume()[1],1)
+
+        if event.direction == Gdk.ScrollDirection.UP:
+            vol+=0.1
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            vol-=0.1
+
+        if vol <= 0:
+            vol = 0
+
+        self.player.set_volume(vol)
+
 
     def do_deactivate(self):
         self.icon.set_visible(False)
