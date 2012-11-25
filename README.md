@@ -9,13 +9,13 @@ You can rate the track, play/pause, go previous, go next, or quit.
 
 Scroll up and down over the tray icon to adjust Rhythmbox's volume.
 
-Clicking directly on the tray icon will attempt to show the Rhythmbox window.
+Click on the tray icon to show or hide the Rhythmbox window.
 
 The tray icon has a green 'play' overlay when a track is playing.
 
 When you hover over the icon, it shows the playing track:
 
-![Hover Icon](http://farm8.staticflickr.com/7102/7219610526_a2cd6e9f18_o.png)
+![Hover Icon](http://farm9.staticflickr.com/8487/8214931320_8d99b85578_o.png)
 
 
 How to install
@@ -53,4 +53,3 @@ On Ubuntu, you will need to allow applications in your systray
 
 Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon) plugin.
 
-This plugin depends on the "*MPRIS D-Bus Interface*" plugin in Rhythmbox, please ensure that it has been enabled.
