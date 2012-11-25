@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6ac78b8d-6e7e-4cca-b7a9-40b4365b56a3" name="Rejected commit: Default" comment="Changed info in .plugin file">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rhythmbox-tray-icon.zip" afterPath="$PROJECT_DIR$/rhythmbox-tray-icon.zip" />
+    <list default="true" id="6ac78b8d-6e7e-4cca-b7a9-40b4365b56a3" name="Rejected commit: Default" comment="Removed MPRIS dependency">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <ignored path="rhythmbox-tray-icon.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -19,42 +19,16 @@
   <component name="DaemonCodeAnalyzer">
     <disable_hints />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="rhythmbox-tray-icon" />
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="tray_icon.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tray_icon.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="11" selection-start="361" selection-end="361" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tray_icon_worker.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tray_icon_worker.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="184" column="22" selection-start="7265" selection-end="7265" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="5" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="0" selection-start="628" selection-end="628" vertical-scroll-proportion="0.2027972">
+            <state line="1" column="0" selection-start="7" selection-end="7" vertical-scroll-proportion="0.020604396">
               <folding />
             </state>
           </provider>
@@ -69,11 +43,15 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/rate.py" />
         <option value="$PROJECT_DIR$/debian/statusicon.py" />
         <option value="$PROJECT_DIR$/xmenuitem.py" />
         <option value="$PROJECT_DIR$/test.py" />
@@ -82,13 +60,14 @@
         <option value="$PROJECT_DIR$/starhscale.py" />
         <option value="$PROJECT_DIR$/statusicon.py" />
         <option value="$PROJECT_DIR$/tray_icon_starwidget.py" />
-        <option value="$PROJECT_DIR$/tray_icon.py" />
         <option value="$PROJECT_DIR$/README.rst" />
-        <option value="$PROJECT_DIR$/tray_icon_worker.py" />
         <option value="$PROJECT_DIR$/tray_icon_ubuntu.py" />
-        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/tray_icon_worker.py" />
+        <option value="$PROJECT_DIR$/tray_icon.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/tray_icon.plugin" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -159,11 +138,11 @@
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="Markdown" />
     <property name="last_opened_file_path" value="/usr/lib/python2.7/dist-packages/gobject" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -195,7 +174,6 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
       <option name="PARAMETERS" value="" />
-      <option name="MULTIPROCESS" value="false" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonCover" />
       <RunnerSettings RunnerId="PythonRunner" />
@@ -217,7 +195,6 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/rate.py" />
       <option name="PARAMETERS" value="" />
-      <option name="MULTIPROCESS" value="false" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
@@ -235,7 +212,6 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tray_icon_starwidget.py" />
       <option name="PARAMETERS" value="" />
-      <option name="MULTIPROCESS" value="false" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
@@ -255,7 +231,6 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tray_icon_worker.py" />
       <option name="PARAMETERS" value="" />
-      <option name="MULTIPROCESS" value="false" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
@@ -275,27 +250,10 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tray_icon_ubuntu.py" />
       <option name="PARAMETERS" value="" />
-      <option name="MULTIPROCESS" value="false" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="/usr/bin/python2.7" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <module name="rhythmbox-tray-icon" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="MULTIPROCESS" value="false" />
       <method />
     </configuration>
     <configuration default="true" type="docs" factoryName="Docutils task">
@@ -312,6 +270,21 @@
       <option name="docutils_params" value="" />
       <option name="docutils_task" value="" />
       <option name="docutils_open_in_browser" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/bin/python2.7" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <module name="rhythmbox-tray-icon" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
@@ -351,6 +324,13 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
+      <JSDebuggerConfigurationSettings>
+        <option name="engineId" value="embedded" />
+        <option name="fileUrl" />
+      </JSDebuggerConfigurationSettings>
+      <method />
+    </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.test" />
       <item index="1" class="java.lang.String" itemvalue="Python.rate" />
@@ -375,6 +355,7 @@
     <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
     <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
     <configuration useDefault="true">$USER_HOME$/.subversion_IDEA</configuration>
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
   </component>
@@ -500,23 +481,60 @@
       <created>1337456220231</created>
       <updated>1337456220231</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Basic migration from worker to plugin">
+      <created>1353757339268</created>
+      <updated>1353757339269</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Restored main menu functionality">
+      <created>1353759789014</created>
+      <updated>1353759789014</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Ability to set song rating">
+      <created>1353759965716</created>
+      <updated>1353759965716</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Set tooltip when song changes">
+      <created>1353760649519</created>
+      <updated>1353760649519</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Scrolling up and down sets volume">
+      <created>1353761806895</created>
+      <updated>1353761806895</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Maximum volume limit at 1.0">
+      <created>1353761900222</created>
+      <updated>1353761900222</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Tooltip more helpful, also includes artist.">
+      <created>1353762676858</created>
+      <updated>1353762676858</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Code refactoring to follow Python naming conventions">
+      <created>1353764243419</created>
+      <updated>1353764243419</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Removed MPRIS dependency">
+      <created>1353784808067</created>
+      <updated>1353784808067</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-4" width="1442" height="905" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32891247" sideWeight="0.49425286" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24318507" sideWeight="0.7851459" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25394547" sideWeight="0.6710875" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39920425" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32891247" sideWeight="0.5007184" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2148541" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32891247" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -549,7 +567,6 @@
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ROLLBACK_IN_BACKGROUND" value="false" />
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="false" />
-    <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
@@ -559,12 +576,11 @@
     <option name="SOFT_WRAPS_IN_SHORT_DIFF" value="true" />
     <option name="INCLUDE_TEXT_INTO_PATCH" value="false" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
-    <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="SHOW_FILE_HISTORY_DETAILS" value="true" />
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed info in .plugin file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed MPRIS dependency" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -577,16 +593,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Test status icon using star widget" />
-    <MESSAGE value="Removed background hover color" />
-    <MESSAGE value="Wired up test icon with star widget" />
-    <MESSAGE value="Removed rating node" />
-    <MESSAGE value="Converted tabs to spaces" />
-    <MESSAGE value="Invoking statusicon.py from tray_icon" />
-    <MESSAGE value="Moved main functionality to statusicon.py" />
-    <MESSAGE value="Ability to detect rhythmbox being played/paused" />
-    <MESSAGE value="Cleanup, deleted unnecessary files" />
-    <MESSAGE value="Renamed files for consistency" />
     <MESSAGE value="Sets a tooltip and icon when playing/paused. Closes #1" />
     <MESSAGE value="Removed unnecessary PNG" />
     <MESSAGE value="Reimplemented star rating with gtk.Label" />
@@ -602,14 +608,33 @@
     <MESSAGE value="Corrected unzip path" />
     <MESSAGE value="Fixed image URLs" />
     <MESSAGE value="Changed info in .plugin file" />
+    <MESSAGE value="Whitelist systray instructions added" />
+    <MESSAGE value="Basic migration from worker to plugin" />
+    <MESSAGE value="Restored main menu functionality" />
+    <MESSAGE value="Ability to set song rating" />
+    <MESSAGE value="Set tooltip when song changes" />
+    <MESSAGE value="Scrolling up and down sets volume" />
+    <MESSAGE value="Maximum volume limit at 1.0" />
+    <MESSAGE value="Tooltip more helpful, also includes artist." />
+    <MESSAGE value="Code refactoring to follow Python naming conventions" />
+    <MESSAGE value="Removed MPRIS dependency" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.PyCharm10/system/python_stubs/-1247972723/gtk/gdk.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4008" column="8" selection-start="89752" selection-end="89752" vertical-scroll-proportion="0.33264032" />
+        <state line="1" column="0" selection-start="7" selection-end="7" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="0" selection-start="7" selection-end="7" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file:///usr/lib/python2.7/dist-packages/gobject/constants.py">
@@ -622,44 +647,11 @@
         <state line="650" column="29" selection-start="27249" selection-end="27249" vertical-scroll-proportion="0.5260989" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tray_playing.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LICENSE">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tray_icon.plugin">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="172" selection-end="172" vertical-scroll-proportion="0.18543956" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tray_icon.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="11" selection-start="361" selection-end="361" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tray_icon_worker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="184" column="22" selection-start="7265" selection-end="7265" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="5" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="0" selection-start="628" selection-end="628" vertical-scroll-proportion="0.2027972">
+        <state line="1" column="0" selection-start="7" selection-end="7" vertical-scroll-proportion="0.020604396">
           <folding />
         </state>
-      </provider>
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
       </provider>
     </entry>
   </component>
