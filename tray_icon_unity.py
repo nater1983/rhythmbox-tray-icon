@@ -20,20 +20,39 @@ class TrayIconUnity():
     def sayhello(self, item):
         print "menu item selected"
 
+
     def scroll(self, aai, ind, steps):
         print "hello" # doesn't print anything
 
     def makemenu(self):
         ' Set up the menu '
         menu = Gtk.Menu()
-        self.check_item = Gtk.MenuItem('Check')
-        self.check_item.set_sensitive(False)
+
+        self.currentsong_menuitem = Gtk.MenuItem('')
+        self.currentsong_menuitem.set_sensitive(False)
+        self.currentsong_menuitem.connect('activate', self.sayhello)
+        self.currentsong_menuitem.show()
+
+        self.rating_menuitem = Gtk.MenuItem('☆☆☆☆☆')
+        self.rating_menuitem.show()
+
+        submenu = Gtk.Menu()
+        for i in [0,1,2,3,4,5]:
+            starString = '★' * i + '☆' * (5-i)
+            ratingsubmenuitem = Gtk.MenuItem(starString)
+            ratingsubmenuitem.show()
+            submenu.append(ratingsubmenuitem)
+
+        self.rating_menuitem.set_submenu(submenu)
+
+
+
         exit_item = Gtk.MenuItem('Quit')
-        self.check_item.connect('activate', self.sayhello)
-        self.check_item.show()
         exit_item.connect('activate', Gtk.main_quit)
         exit_item.show()
-        menu.append(self.check_item)
+
+        menu.append(self.currentsong_menuitem)
+        menu.append(self.rating_menuitem)
         menu.append(exit_item)
         menu.show()
         return menu
@@ -64,9 +83,11 @@ class TrayIconUnity():
                 metadata = fulldata[dbus.String(u'Metadata')]
                 if dbus.String(u'xesam:title') in metadata:
                     print metadata[dbus.String(u'xesam:title')]
-                    self.check_item.set_label(metadata[dbus.String(u'xesam:title')])
+                    self.currentsong_menuitem.set_label(metadata[dbus.String(u'xesam:title')])
                 if dbus.String(u'xesam:userRating') in metadata:
-                    print metadata[dbus.String(u'xesam:userRating')]
+                    rating = int((metadata[dbus.String(u'xesam:userRating')]) * 5)
+                    starString = '★' * rating + '☆' * (5-rating)
+                    self.rating_menuitem.set_label(starString)
         except:
             print traceback.print_exc()
 
