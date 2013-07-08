@@ -57,8 +57,13 @@ class TrayIconUnity():
         menu.show()
         return menu
 
-    def startapp(self):
-        self.ai = AI.Indicator.new(self.APPNAME, self.stopIcon, AI.IndicatorCategory.HARDWARE)
+    def startapp(self, playbackStatus):
+
+        statusIcon = self.stopIcon
+        if playbackStatus == 'Playing':
+            statusIcon = self.playIcon
+
+        self.ai = AI.Indicator.new(self.APPNAME, statusIcon, AI.IndicatorCategory.HARDWARE)
         self.ai.set_status(AI.IndicatorStatus.ACTIVE)
         self.ai.set_menu(self.makemenu())
         self.ai.connect("scroll-event", self.scroll)
@@ -100,8 +105,12 @@ class TrayIconUnity():
 DBusGMainLoop(set_as_default=True)
 bus = dbus.SessionBus()
 
-bus.add_match_string_non_blocking(
-    "type='signal',member='PropertiesChanged'")
+bus.add_match_string_non_blocking("type='signal',member='PropertiesChanged'")
 tiu = TrayIconUnity()
 bus.add_message_filter(tiu.filter_cb)
-tiu.startapp()
+
+mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+playbackStatus = iface.Get('org.mpris.MediaPlayer2.Player','PlaybackStatus')
+
+tiu.startapp(playbackStatus)
