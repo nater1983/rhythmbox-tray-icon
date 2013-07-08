@@ -45,6 +45,15 @@ class TrayIconUnity():
         except:
             pass
 
+    def playpause(self, item):
+        try:
+            session_bus = dbus.SessionBus()
+            player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
+            mplayeriface = dbus.Interface(player, dbus_interface='org.mpris.MediaPlayer2.Player')
+            mplayeriface.PlayPause()
+        except:
+            pass
+
     def sayhello(self, item):
         print "menu item selected"
 
@@ -73,6 +82,11 @@ class TrayIconUnity():
 
         self.rating_menuitem.set_submenu(submenu)
 
+        playpause_item = Gtk.MenuItem('Play/Pause')
+        playpause_item.connect('activate', self.playpause)
+        playpause_item.show()
+
+
         next_item = Gtk.MenuItem('Next')
         next_item.connect('activate', self.next)
         next_item.show()
@@ -87,6 +101,7 @@ class TrayIconUnity():
 
         menu.append(self.currentsong_menuitem)
         menu.append(self.rating_menuitem)
+        menu.append(playpause_item)
         menu.append(next_item)
         menu.append(prev_item)
         menu.append(exit_item)
