@@ -57,42 +57,33 @@ class TrayIconUnity():
         menu.show()
         return menu
 
-    def startapp(self, playbackStatus):
+    def startapp(self):
 
-        statusIcon = self.stopIcon
-        if playbackStatus == 'Playing':
-            statusIcon = self.playIcon
-
-        self.ai = AI.Indicator.new(self.APPNAME, statusIcon, AI.IndicatorCategory.HARDWARE)
+        self.ai = AI.Indicator.new(self.APPNAME, self.stopIcon, AI.IndicatorCategory.HARDWARE)
         self.ai.set_status(AI.IndicatorStatus.ACTIVE)
         self.ai.set_menu(self.makemenu())
         self.ai.connect("scroll-event", self.scroll)
+
+        self.set_menu_values()
         Gtk.main()
+
+    def set_menu_values(self):
+        if self.is_playing():
+            self.ai.set_icon(self.playIcon)
+        else:
+            self.ai.set_icon(self.stopIcon)
+
+        self.currentsong_menuitem.set_label(self.get_current_track())
+
+        rating = self.get_current_rating()
+        starString = '★' * rating + '☆' * (5-rating)
+        self.rating_menuitem.set_label(starString)
 
     def filter_cb(self, bus, message):
         # the NameAcquired message comes through before match string gets applied
         args = message.get_args_list()
-        #print args
         try:
-            if len(args) < 2:
-                return
-            fulldata = args[1]
-            if dbus.String(u'PlaybackStatus') in fulldata:
-                playing = fulldata[dbus.String(u'PlaybackStatus')]
-                if playing == 'Playing':
-                    self.ai.set_icon(self.playIcon)
-                else:
-                    self.ai.set_icon(self.stopIcon)
-
-            if dbus.String(u'Metadata') in fulldata:
-                metadata = fulldata[dbus.String(u'Metadata')]
-                if dbus.String(u'xesam:title') in metadata:
-                    print metadata[dbus.String(u'xesam:title')]
-                    self.currentsong_menuitem.set_label(metadata[dbus.String(u'xesam:title')])
-                if dbus.String(u'xesam:userRating') in metadata:
-                    rating = int((metadata[dbus.String(u'xesam:userRating')]) * 5)
-                    starString = '★' * rating + '☆' * (5-rating)
-                    self.rating_menuitem.set_label(starString)
+            self.set_menu_values()
         except:
             print traceback.print_exc()
 
@@ -100,6 +91,23 @@ class TrayIconUnity():
         # (app_name, notification_id, icon, summary, body, actions, hints, timeout)
         #print("Notification from app '%s'" % args[0])
 
+    def is_playing(self):
+        bus = dbus.SessionBus()
+        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+        return iface.Get('org.mpris.MediaPlayer2.Player', 'PlaybackStatus') == 'Playing'
+
+    def get_current_track(self):
+        bus = dbus.SessionBus()
+        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+        return iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')[dbus.String(u'xesam:title')]
+
+    def get_current_rating(self):
+        bus = dbus.SessionBus()
+        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+        return int(iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')[dbus.String(u'xesam:userRating')] * 5)
 
 
 DBusGMainLoop(set_as_default=True)
@@ -109,8 +117,4 @@ bus.add_match_string_non_blocking("type='signal',member='PropertiesChanged'")
 tiu = TrayIconUnity()
 bus.add_message_filter(tiu.filter_cb)
 
-mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
-iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
-playbackStatus = iface.Get('org.mpris.MediaPlayer2.Player','PlaybackStatus')
-
-tiu.startapp(playbackStatus)
+tiu.startapp()
