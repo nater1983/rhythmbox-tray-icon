@@ -17,6 +17,16 @@ class TrayIconUnity():
     APPNAME = "Rhythmbox Tray Icon"
 
 
+    def quit(self, item):
+        try:
+            session_bus = dbus.SessionBus()
+            player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
+            mplayeriface = dbus.Interface(player, dbus_interface='org.mpris.MediaPlayer2')
+            mplayeriface.Quit()
+            Gtk.main_quit()
+        except:
+            sys.exit()
+
     def sayhello(self, item):
         print "menu item selected"
 
@@ -45,10 +55,8 @@ class TrayIconUnity():
 
         self.rating_menuitem.set_submenu(submenu)
 
-
-
         exit_item = Gtk.MenuItem('Quit')
-        exit_item.connect('activate', Gtk.main_quit)
+        exit_item.connect('activate', self.quit)
         exit_item.show()
 
         menu.append(self.currentsong_menuitem)
@@ -73,11 +81,14 @@ class TrayIconUnity():
         else:
             self.ai.set_icon(self.stopIcon)
 
-        self.currentsong_menuitem.set_label(self.get_current_track())
+        currentTrack = self.get_current_track()
+        if currentTrack:
+            self.currentsong_menuitem.set_label(self.get_current_track())
 
         rating = self.get_current_rating()
-        starString = '★' * rating + '☆' * (5-rating)
-        self.rating_menuitem.set_label(starString)
+        if rating:
+            starString = '★' * rating + '☆' * (5-rating)
+            self.rating_menuitem.set_label(starString)
 
     def filter_cb(self, bus, message):
         # the NameAcquired message comes through before match string gets applied
@@ -90,22 +101,31 @@ class TrayIconUnity():
 
 
     def is_playing(self):
-        bus = dbus.SessionBus()
-        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
-        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
-        return iface.Get('org.mpris.MediaPlayer2.Player', 'PlaybackStatus') == 'Playing'
+        try:
+            bus = dbus.SessionBus()
+            mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+            iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+            return iface.Get('org.mpris.MediaPlayer2.Player', 'PlaybackStatus') == 'Playing'
+        except:
+            return False
 
     def get_current_track(self):
-        bus = dbus.SessionBus()
-        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
-        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
-        return iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')[dbus.String(u'xesam:title')]
+        try:
+            bus = dbus.SessionBus()
+            mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+            iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+            return iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')[dbus.String(u'xesam:title')]
+        except:
+            return None
 
     def get_current_rating(self):
-        bus = dbus.SessionBus()
-        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
-        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
-        return int(iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')[dbus.String(u'xesam:userRating')] * 5)
+        try:
+            bus = dbus.SessionBus()
+            mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+            iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+            return int(iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')[dbus.String(u'xesam:userRating')] * 5)
+        except:
+            return None
 
 
 DBusGMainLoop(set_as_default=True)
