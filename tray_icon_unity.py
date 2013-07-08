@@ -37,7 +37,7 @@ class TrayIconUnity():
         self.rating_menuitem.show()
 
         submenu = Gtk.Menu()
-        for i in [0,1,2,3,4,5]:
+        for i in [5,4,3,2,1,0]:
             starString = '★' * i + '☆' * (5-i)
             ratingsubmenuitem = Gtk.MenuItem(starString)
             ratingsubmenuitem.show()
@@ -82,14 +82,12 @@ class TrayIconUnity():
     def filter_cb(self, bus, message):
         # the NameAcquired message comes through before match string gets applied
         args = message.get_args_list()
+        print args
         try:
             self.set_menu_values()
         except:
             print traceback.print_exc()
 
-        # args are
-        # (app_name, notification_id, icon, summary, body, actions, hints, timeout)
-        #print("Notification from app '%s'" % args[0])
 
     def is_playing(self):
         bus = dbus.SessionBus()
@@ -113,7 +111,7 @@ class TrayIconUnity():
 DBusGMainLoop(set_as_default=True)
 bus = dbus.SessionBus()
 
-bus.add_match_string_non_blocking("type='signal',member='PropertiesChanged'")
+bus.add_match_string_non_blocking("type='signal',member='PropertiesChanged',path='/org/mpris/MediaPlayer2'")
 tiu = TrayIconUnity()
 bus.add_message_filter(tiu.filter_cb)
 
