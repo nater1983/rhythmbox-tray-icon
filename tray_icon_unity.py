@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from gi.repository import AppIndicator3 as AI
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio, GLib
 import os
 import sys
 import dbus
@@ -54,12 +54,23 @@ class TrayIconUnity():
         except:
             pass
 
+    def rate(self, item, *data):
+        self.set_track_rating(data[0])
+
     def sayhello(self, item):
         print "menu item selected"
 
 
     def scroll(self, aai, ind, steps):
-        print "hello" # doesn't print anything
+        print aai
+        print ind
+        print steps
+        bus = dbus.SessionBus()
+        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+        #current_volume = iface.Get('org.mpris.MediaPlayer2.Player', 'Volume')
+        #iface.Set('org.mpris.MediaPlayer2.Player', 'Volume', 0.5)
+
 
     def makemenu(self):
         ' Set up the menu '
@@ -77,6 +88,7 @@ class TrayIconUnity():
         for i in [5,4,3,2,1,0]:
             starString = '★' * i + '☆' * (5-i)
             ratingsubmenuitem = Gtk.MenuItem(starString)
+            ratingsubmenuitem.connect('activate', self.rate, i)
             ratingsubmenuitem.show()
             submenu.append(ratingsubmenuitem)
 
@@ -142,6 +154,10 @@ class TrayIconUnity():
         except:
             print traceback.print_exc()
 
+    # def filter_scroll(self, bus, message):
+    #     print "Scrolled"
+    #     print bus
+    #     print message
 
     def is_playing(self):
         try:
@@ -161,6 +177,15 @@ class TrayIconUnity():
         except:
             return None
 
+    def get_current_track_url(self):
+        try:
+            bus = dbus.SessionBus()
+            mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+            iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+            return iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')[dbus.String(u'xesam:url')]
+        except:
+            return None
+
     def get_current_rating(self):
         try:
             bus = dbus.SessionBus()
@@ -171,11 +196,41 @@ class TrayIconUnity():
             return None
 
 
+    def set_track_rating(self, rating):
+        """
+        Sets the current song rating in Rhythmbox.
+        """
+
+        try:
+            currentSongURI = self.get_current_track_url()
+
+            if currentSongURI:
+
+                busType = Gio.BusType.SESSION
+                flags = 0
+                ratingInterface = None
+
+                proxy = Gio.DBusProxy.new_for_bus_sync(busType, flags, ratingInterface,
+                                                       "org.gnome.Rhythmbox3",
+                                                       "/org/gnome/Rhythmbox3/RhythmDB",
+                                                       "org.gnome.Rhythmbox3.RhythmDB", None)
+
+                variantRating = GLib.Variant("d", float(rating))
+                proxy.SetEntryProperties("(sa{sv})", currentSongURI, {"rating": variantRating})
+                self.set_menu_values()
+        except:
+                print traceback.print_exc()
+
+
 DBusGMainLoop(set_as_default=True)
 bus = dbus.SessionBus()
-
 bus.add_match_string_non_blocking("type='signal',member='PropertiesChanged',path='/org/mpris/MediaPlayer2'")
 tiu = TrayIconUnity()
 bus.add_message_filter(tiu.filter_cb)
+
+# sbus = dbus.SessionBus()
+# sbus.add_match_string_non_blocking("type='method_call'")
+# sbus.add_message_filter(tiu.filter_scroll)
+
 
 tiu.startapp()
