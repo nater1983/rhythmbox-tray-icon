@@ -59,7 +59,7 @@ class TrayIconUnity():
             pass
 
     def rate(self, item, *data):
-        print "Setting rating to " + data
+        print "Setting rating to " + str(data[0])
         self.set_track_rating(data[0])
 
     def scroll(self, aai, ind, steps):
