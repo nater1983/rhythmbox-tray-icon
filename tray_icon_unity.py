@@ -18,6 +18,7 @@ class TrayIconUnity():
 
 
     def quit(self, item):
+        print "Quitting"
         try:
             session_bus = dbus.SessionBus()
             player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -28,6 +29,7 @@ class TrayIconUnity():
             sys.exit()
 
     def next(self, item):
+        print "Next"
         try:
             session_bus = dbus.SessionBus()
             player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -37,6 +39,7 @@ class TrayIconUnity():
             pass
 
     def previous(self, item):
+        print "Previous"
         try:
             session_bus = dbus.SessionBus()
             player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -46,6 +49,7 @@ class TrayIconUnity():
             pass
 
     def playpause(self, item):
+        print "Play/Pause"
         try:
             session_bus = dbus.SessionBus()
             player = session_bus.get_object('org.mpris.MediaPlayer2.rhythmbox','/org/mpris/MediaPlayer2')
@@ -55,30 +59,26 @@ class TrayIconUnity():
             pass
 
     def rate(self, item, *data):
+        print "Setting rating to " + data
         self.set_track_rating(data[0])
 
-    def sayhello(self, item):
-        print "menu item selected"
-
-
     def scroll(self, aai, ind, steps):
-        print aai
-        print ind
-        print steps
-        bus = dbus.SessionBus()
-        mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
+        pass
+        #Not working due to this bug: https://bugs.launchpad.net/indicator-application/+bug/1075152
+        #bus = dbus.SessionBus()
+        #mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
         iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
         #current_volume = iface.Get('org.mpris.MediaPlayer2.Player', 'Volume')
         #iface.Set('org.mpris.MediaPlayer2.Player', 'Volume', 0.5)
 
 
+
     def makemenu(self):
-        ' Set up the menu '
+        print "Creating menu items"
         menu = Gtk.Menu()
 
         self.currentsong_menuitem = Gtk.MenuItem('')
         self.currentsong_menuitem.set_sensitive(False)
-        self.currentsong_menuitem.connect('activate', self.sayhello)
         self.currentsong_menuitem.show()
 
         self.rating_menuitem = Gtk.MenuItem('☆☆☆☆☆')
@@ -121,7 +121,7 @@ class TrayIconUnity():
         return menu
 
     def startapp(self):
-
+        print "Starting app"
         self.ai = AI.Indicator.new(self.APPNAME, self.stopIcon, AI.IndicatorCategory.HARDWARE)
         self.ai.set_status(AI.IndicatorStatus.ACTIVE)
         self.ai.set_menu(self.makemenu())
@@ -131,6 +131,7 @@ class TrayIconUnity():
         Gtk.main()
 
     def set_menu_values(self):
+        print "Setting menu values"
         if self.is_playing():
             self.ai.set_icon(self.playIcon)
         else:
@@ -146,18 +147,13 @@ class TrayIconUnity():
             self.rating_menuitem.set_label(starString)
 
     def filter_cb(self, bus, message):
+        print "Filter event raised"
         # the NameAcquired message comes through before match string gets applied
-        args = message.get_args_list()
-        print args
+        # args = message.get_args_list()
         try:
             self.set_menu_values()
         except:
             print traceback.print_exc()
-
-    # def filter_scroll(self, bus, message):
-    #     print "Scrolled"
-    #     print bus
-    #     print message
 
     def is_playing(self):
         try:
