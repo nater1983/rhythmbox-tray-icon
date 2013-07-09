@@ -10,8 +10,8 @@ from dbus.mainloop.glib import DBusGMainLoop
 import traceback
 
 class TrayIconUnity():
-    playIcon = os.path.join(sys.path[0], "tray_playing.png")
-    stopIcon = os.path.join(sys.path[0], "tray_stopped.png")
+    playIcon = os.path.join(sys.path[0], "tray_playing_unity.png")
+    stopIcon = os.path.join(sys.path[0], "tray_stopped_unity.png")
 
 
     APPNAME = "Rhythmbox Tray Icon"
