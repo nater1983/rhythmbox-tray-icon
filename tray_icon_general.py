@@ -9,9 +9,6 @@ import math
 
 class TrayIconGeneral():
 
-    __gtype_name = 'TrayIconGeneral'
-    object = GObject.property(type=GObject.Object)
-
     rhythmbox_icon = os.path.join(sys.path[0], "tray_stopped.png")
     play_icon = os.path.join(sys.path[0], "tray_playing.png")
     menu = None

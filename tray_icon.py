@@ -9,8 +9,9 @@ import sys
 from tray_icon_general import TrayIconGeneral
 
 
-
 class TrayIcon(GObject.Object, Peas.Activatable):
+    __gtype_name = 'TrayIconGeneral'
+    object = GObject.property(type=GObject.Object)
 
     isUnity = False
     plugin = None
@@ -30,15 +31,17 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
         if not self.isUnity:
             self.plugin = TrayIconGeneral()
+            self.plugin.do_activate()
         else:
-             self.proc = subprocess.Popen(os.path.join(sys.path[0], "tray_icon_unity.py"))
-
-
-        self.plugin.do_activate()
+            self.proc = subprocess.Popen(os.path.join(sys.path[0], "tray_icon_unity.py"))
 
 
     def do_deactivate(self):
         """
         Called when plugin is deactivated
         """
-        self.plugin.do_deactivate()
+        if not self.isUnity:
+            self.plugin.do_deactivate()
+        else:
+            if self.proc:
+                self.proc.kill()

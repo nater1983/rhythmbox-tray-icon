@@ -67,7 +67,7 @@ class TrayIconUnity():
         #Not working due to this bug: https://bugs.launchpad.net/indicator-application/+bug/1075152
         #bus = dbus.SessionBus()
         #mplayer = bus.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/MediaPlayer2')
-        iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
+        #iface = dbus.Interface(mplayer, dbus.PROPERTIES_IFACE)
         #current_volume = iface.Get('org.mpris.MediaPlayer2.Player', 'Volume')
         #iface.Set('org.mpris.MediaPlayer2.Player', 'Volume', 0.5)
 
