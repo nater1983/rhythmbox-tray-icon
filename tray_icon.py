@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # coding=utf-8
 
 from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject, RB
@@ -64,9 +64,9 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         screen = Gdk.Screen.get_default()
         css_provider = Gtk.CssProvider()
 
-        #The only way I could do it: Re-set bg, border colors, causing menuitem to 'expand', then set the :hover colors with unico
-        #Also strange, background-color is ignored, but background is not.
-        css_provider.load_from_data("GtkMenuItem { border:@bg_color; background:@bg_color; } GtkMenuItem:hover { background:@selected_bg_color; } GtkWidget{ border: @bg_color; } #starMenu:hover { color:@fg_color;background: @bg_color; -unico-inner-stroke-width: 0; }")
+        # This line breaks the plugin with Rhythmbox 3, so I've commented it out. Seems to have absolutely
+        # no effect on the plugin.
+    #    css_provider.load_from_data("GtkMenuItem { border:@bg_color; background:@bg_color; } GtkMenuItem:hover { background:@selected_bg_color; } GtkWidget{ border: @bg_color; } #starMenu:hover { color:@fg_color;background: @bg_color; -unico-inner-stroke-width: 0; }")
 
         context = Gtk.StyleContext()
         context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
