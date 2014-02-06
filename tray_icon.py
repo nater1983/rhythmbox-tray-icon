@@ -176,6 +176,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
             else:
                 self.wind.show()
                 self.wind.present()
+        elif event.button == 2: # middle button
+            self.player.do_next()
 
     def play(self, widget):
         """
@@ -225,7 +227,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         prepend = ""
         if len(message) > 0:
             prepend = "\r\n"
-        tooltip_text = message + prepend + "(Scroll = volume, click = visibility)"
+        tooltip_text = message + prepend + "(Scroll = volume, click = visibility, middle click = next)"
         self.icon.set_tooltip_text(tooltip_text)
 
     def do_activate(self):
