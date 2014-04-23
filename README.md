@@ -1,7 +1,7 @@
 Rhythmbox tray icon plugin
 ==========================
 
-A tray icon to control basic Rhythmbox features. Requires Rhythmbox 2.9+
+A tray icon to control basic Rhythmbox features. Requires Rhythmbox 2.9+.  Was working in Ubuntu 12.04, but is no longer maintained due to Ubuntu Panel restrictions.
 
 You can rate the track, play/pause, go previous, go next, or quit.
 
