@@ -183,7 +183,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Starts playing
         """
-        self.player.playpause(True) # does nothing argument
+        self.player.playpause() # does nothing argument
 
     def next(self, widget):
         """
