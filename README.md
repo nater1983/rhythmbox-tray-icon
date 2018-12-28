@@ -5,7 +5,7 @@ A tray icon to control basic Rhythmbox features. Requires Rhythmbox 2.9+.  Was w
 
 You can rate the track, play/pause, go previous, go next, or quit.
 
-![Tray Icon](http://farm8.staticflickr.com/7232/7219610460_327356b800_o.png)
+![Tray Icon](https://www.elgraz.net/files/trayscreen.png)
 
 Scroll up and down over the tray icon to adjust Rhythmbox's volume.
 
