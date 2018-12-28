@@ -7,6 +7,3 @@ Description=A tray icon to control Rhythmbox
 Authors=Mendhak <rhythmboxtray@mendhak.com>
 Copyright=Mendhak, GPL v3
 Website=http://mendhak.github.com/rhythmbox-tray-icon/
-
-[RB]
-InitiallyEnabled=true
