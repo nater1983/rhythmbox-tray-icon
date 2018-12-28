@@ -1,7 +1,7 @@
 Rhythmbox tray icon plugin
 ==========================
 
-A tray icon to control basic Rhythmbox features. Requires Rhythmbox 2.9+.  Was working in Ubuntu 12.04, but is no longer maintained due to Ubuntu Panel restrictions.
+A tray icon to control basic Rhythmbox features. Requires Rhythmbox 2.9+.
 
 You can rate the track, play/pause, go previous, go next, or quit.
 
@@ -23,7 +23,7 @@ How to install
 
 To install, run these commands in a terminal window:
 
-    wget https://github.com/mendhak/rhythmbox-tray-icon/raw/master/rhythmbox-tray-icon.zip
+    wget https://github.com/ElGraz/rhythmbox-tray-icon/raw/master/rhythmbox-tray-icon.zip
     unzip -u rhythmbox-tray-icon.zip -d ~/.local/share/rhythmbox/plugins
 
 To do it manually, download [rhythmbox-tray-icon.zip](https://github.com/mendhak/rhythmbox-tray-icon/raw/master/rhythmbox-tray-icon.zip) and extract its contents into ~/.local/share/rhythmbox/plugins.
@@ -47,9 +47,5 @@ It will remove the tray_* files from the plugins folder.
 Notes
 ----------------
 
-On Ubuntu, you will need to allow applications in your systray
-
-    gsettings set com.canonical.Unity.Panel systray-whitelist "['all']"
-
-Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon) plugin.
+Modified from the work of Mendhak ( https://github.com/mendhak/rhythmbox-tray-icon )
 
