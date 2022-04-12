@@ -84,12 +84,17 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         screen = Gdk.Screen.get_default()
         css_provider = Gtk.CssProvider()
 
-        # This line breaks the plugin with Rhythmbox 3, so I've commented it out. Seems to have absolutely
-        # no effect on the plugin.
-    #    css_provider.load_from_data("GtkMenuItem { border:@bg_color; background:@bg_color; } GtkMenuItem:hover { background:@selected_bg_color; } GtkWidget{ border: @bg_color; } #starMenu:hover { color:@fg_color;background: @bg_color; -unico-inner-stroke-width: 0; }")
+        css_provider.load_from_data(
+            b"""GtkMenuItem { border:@bg_color; background:@bg_color; }
+                GtkMenuItem:hover { background:@selected_bg_color; }
+                GtkWidget{ border: @bg_color; }
+                #starMenu:hover { color:@fg_color;background: @bg_color;
+                -unico-inner-stroke-width: 0; }
+            """)
 
         context = Gtk.StyleContext()
-        context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        context.add_provider_for_screen(screen, css_provider,
+                                        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def set_title_menu_item(self):
         current_entry = self.player.get_playing_entry()
