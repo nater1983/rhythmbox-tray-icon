@@ -49,12 +49,17 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
         self.title_menu_item = Gtk.ImageMenuItem("")
         self.set_title_menu_item()
-        self.title_menu_item.connect("button-press-event", self.toggle_player_visibility)
+        self.title_menu_item.connect("button-press-event",
+                                     self.toggle_player_visibility)
 
         menuitem_playpause.connect("activate", self.play)
         menuitem_next.connect("activate", self.next)
         menuitem_prev.connect("activate", self.previous)
         menuitem_quit.connect("activate", self.quit)
+
+        menuitem_star = self.get_rating_menuitem()
+        if menuitem_star:
+            self.menu.append(menuitem_star)
 
         self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.title_menu_item)
