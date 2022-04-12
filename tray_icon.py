@@ -15,6 +15,13 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     rhythmbox_icon = os.path.join(sys.path[0], "tray_stopped.png")
     play_icon = os.path.join(sys.path[0], "tray_playing.png")
     menu = None
+    title_menu_item = None
+
+    def position_menu_cb(self, m, x, y=None, i=None):
+        try:
+            return Gtk.StatusIcon.position_menu(self.menu, x, y, self.icon)
+        except (AttributeError, TypeError):
+            return Gtk.StatusIcon.position_menu(self.menu, self.icon)
 
     def show_popup_menu(self, icon, button, time, data = None):
         """
@@ -40,11 +47,18 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         menuitem_prev = Gtk.MenuItem("⏮ Prev")
         menuitem_quit = Gtk.MenuItem("⏏ Quit")
 
+        self.title_menu_item = Gtk.ImageMenuItem("")
+        self.set_title_menu_item()
+        self.title_menu_item.connect("button-press-event", self.toggle_player_visibility)
+
         menuitem_playpause.connect("activate", self.play)
         menuitem_next.connect("activate", self.next)
         menuitem_prev.connect("activate", self.previous)
         menuitem_quit.connect("activate", self.quit)
 
+        self.menu.append(Gtk.SeparatorMenuItem())
+        self.menu.append(self.title_menu_item)
+        self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(menuitem_playpause)
         self.menu.append(menuitem_next)
         self.menu.append(menuitem_prev)
@@ -72,6 +86,13 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         context = Gtk.StyleContext()
         context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
+    def set_title_menu_item(self):
+        current_entry = self.player.get_playing_entry()
+        if current_entry is not None:
+            artist = current_entry.get_string(RB.RhythmDBPropType.ARTIST)
+            album = current_entry.get_string(RB.RhythmDBPropType.ALBUM)
+            title = current_entry.get_string(RB.RhythmDBPropType.TITLE)
+            self.title_menu_item.set_label(artist + "\n" + album + "\n" + title)
 
     def get_rating_menuitem(self):
         """
@@ -215,6 +236,9 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Sets icon and tooltip when playing status changes
         """
+        self.set_title_menu_item()
+
+        self.playing = playing
 
         if playing:
             self.icon.set_from_file(self.play_icon)
