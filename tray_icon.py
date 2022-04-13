@@ -14,9 +14,17 @@ class TrayIcon(GObject.Object, Peas.Activatable):
     __gtype_name = 'TrayIcon'
     object = GObject.property(type=GObject.Object)
 
-    rhythmbox_icon = os.path.join(sys.path[0], "tray_stopped.png")
-    play_icon = os.path.join(sys.path[0], "tray_playing.png")
-    menu = None
+    def __init__(self):
+        self.playing = False
+        self.menu = None
+        # tray icons
+        self.rhythmbox_icon = os.path.join(sys.path[0], "tray_stopped.png")
+        self.play_icon = os.path.join(sys.path[0], "tray_playing.png")
+
+        # css for stars menu item
+        self.css_provider = Gtk.CssProvider()
+        self.css_provider.load_from_data(
+            b"menuitem:hover { color:@fg_color;background: @bg_color; }")
 
     def position_menu_cb(self, m, x, y=None, i=None):
         try:
@@ -39,9 +47,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Creates menu items for popup menu, including star rating
         """
-        if not self.menu:
-            self.set_menu_css()
-
         self.menu = Gtk.Menu()
         self.menu.set_reserve_toggle_size(False)
 
@@ -59,7 +64,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         menuitem_quit.connect("activate", self.quit)
 
         menuitem_star = self.get_rating_menuitem()
-        if menuitem_star:
+        if menuitem_star is not None:
             self.menu.append(menuitem_star)
             self.menu.append(Gtk.SeparatorMenuItem())
         title_menu_item = self.get_title_menu_item()
@@ -73,24 +78,13 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
         self.menu.show_all()
 
-    def set_menu_css(self):
+    def set_menu_css(self, widget):
         """
         Sets style for popup menu, hides hover background for stars
         """
-        screen = Gdk.Screen.get_default()
-        css_provider = Gtk.CssProvider()
-
-        css_provider.load_from_data(
-            b"""GtkMenuItem { border:@bg_color; background:@bg_color; }
-                GtkMenuItem:hover { background:@selected_bg_color; }
-                GtkWidget{ border: @bg_color; }
-                #starMenu:hover { color:@fg_color;background: @bg_color;
-                -unico-inner-stroke-width: 0; }
-            """)
-
-        context = Gtk.StyleContext()
-        context.add_provider_for_screen(screen, css_provider,
-                                        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        context = widget.get_style_context()
+        context.add_provider(self.css_provider,
+                             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def get_title_menu_item(self):
         """
@@ -112,21 +106,20 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Gets a Gtk.MenuItem with the current song's ratings in filled stars
         """
-        menuitem_star = Gtk.MenuItem(self.get_stars_markup(0,5))
         self.star_value =  self.get_song_rating()
+        if self.star_value < 0:
+            return None
+
+        menuitem_star = Gtk.MenuItem(self.get_stars_markup(0,5))
+        self.set_menu_css(menuitem_star)
         label = menuitem_star.get_children()[0]
         label.set_markup(self.get_stars_markup(self.star_value,5))
-
-        menuitem_star.set_name('starMenu')
 
         menuitem_star.connect("motion_notify_event", self.on_star_mouseover)
         menuitem_star.connect("button_press_event", self.on_star_click)
         menuitem_star.connect("leave_notify_event", self.on_star_mouseout)
 
-        if self.star_value >= 0:
-            return menuitem_star
-        else:
-            return None
+        return menuitem_star
 
     def get_song_rating(self):
         """
