@@ -26,16 +26,17 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Called when the icon is right clicked, displays the menu
         """
-
         self.create_popup_menu()
-        #self.menu.popup(None, None, lambda w,x: self.icon.position_menu(self.menu, self.icon), self.icon, 3, time)
+        #self.menu.popup(
+        #    None, None,
+        #    lambda w,x: self.icon.position_menu(self.menu, self.icon),
+        #    self.icon, 3, time)
         self.menu.popup(None, None, None, self.icon, 3, time)
 
     def create_popup_menu(self):
         """
         Creates menu items for popup menu, including star rating
         """
-
         if not self.menu:
             self.set_menu_css()
 
@@ -70,8 +71,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Sets style for popup menu, hides hover background for stars
         """
-
-        #Prevent background color when mouse hovers
         screen = Gdk.Screen.get_default()
         css_provider = Gtk.CssProvider()
 
@@ -107,7 +106,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         """
         Gets a Gtk.MenuItem with the current song's ratings in filled stars
         """
-
         menuitem_star = Gtk.MenuItem(self.get_stars_markup(0,5))
         self.star_value =  self.get_song_rating()
         label = menuitem_star.get_children()[0]
@@ -137,7 +135,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
     def on_star_click(self, widget, event):
         """
-        Method called when stars are clicked on. Determines chosen stars and sets song rating.
+        Method called when stars are clicked on.
+        Determines chosen stars and sets song rating.
         """
         label = widget.get_children()[0]
         self.star_value = self.get_chosen_stars(label, event.x)
@@ -153,7 +152,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
     def get_chosen_stars(self, label, mouseX):
         """
-        Calculates the number of chosen stars to show based on the mouse's X position
+        Calculates the number of chosen stars to show.
+        Based on the mouse's X position.
         """
         star_width = int(label.get_layout().get_pixel_size()[0]/5)
         chosen = math.ceil((mouseX-label.get_layout_offsets()[0])/star_width)
@@ -167,7 +167,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
     def on_star_mouseout(self, widget, event):
         """
-        Method called when mouse leaves the rating stars. Resets stars to original value.
+        Method called when mouse leaves the rating stars.
+        Resets stars to original value.
         """
         label = widget.get_children()[0]
         label.set_markup(self.get_stars_markup(self.star_value, 5))
@@ -175,18 +176,19 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
     def on_star_mouseover(self, widget, event):
         """
-        Method called when mouse hovers over the rating stars. Shows filled stars as mouse hovers.
+        Method called when mouse hovers over the rating stars.
+        Shows filled stars as mouse hovers.
         """
         label = widget.get_children()[0]
-        label.set_markup(self.get_stars_markup(self.get_chosen_stars(label,event.x), 5))
+        label.set_markup(
+            self.get_stars_markup(self.get_chosen_stars(label,event.x), 5))
 
     def get_stars_markup(self, filled_stars, total_stars):
         """
         Gets the Pango Markup for the star rating label
         """
-
         if filled_stars is None or filled_stars <= 0:
-                    filled_stars = 0
+            filled_stars = 0
 
         if filled_stars >= total_stars:
             filled_stars = total_stars
@@ -195,7 +197,8 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         total_stars = int(total_stars)
 
         starString = '★' * filled_stars + '☆' * (total_stars-filled_stars)
-        return "<span size='x-large' foreground='yellow'>" + starString + "</span>"
+        return ("<span size='x-large' foreground='yellow'>" +
+                starString + "</span>")
 
     def toggle_player_visibility(self, icon, event, data = None):
         """
@@ -250,7 +253,9 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         if playing:
             self.icon.set_from_file(self.play_icon)
             current_entry = self.shell.props.shell_player.get_playing_entry()
-            self.set_tooltip_text(current_entry.get_string(RB.RhythmDBPropType.ARTIST) + " - " + current_entry.get_string(RB.RhythmDBPropType.TITLE))
+            self.set_tooltip_text(
+                current_entry.get_string(RB.RhythmDBPropType.ARTIST) +
+                " - " + current_entry.get_string(RB.RhythmDBPropType.TITLE))
         else:
             self.icon.set_from_file(self.rhythmbox_icon)
             self.set_tooltip_text()
@@ -260,9 +265,10 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         Sets tooltip to given message
         """
         prepend = ""
-        if len(message) > 0:
+        info = "(Scroll = volume, click = visibility, middle click = next)"
+        if message:
             prepend = "\r\n"
-        tooltip_text = message + prepend + "(Scroll = volume, click = visibility, middle click = next)"
+        tooltip_text = message + prepend + info
         self.icon.set_tooltip_text(tooltip_text)
 
     def do_activate(self):
@@ -277,7 +283,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.wind.connect("delete-event", self.hide_on_delete)
         self.create_popup_menu()
 
-        self.icon =  Gtk.StatusIcon()
+        self.icon = Gtk.StatusIcon()
         self.icon.set_from_file(self.rhythmbox_icon)
         self.icon.connect("scroll-event", self.on_scroll)
         self.icon.connect("popup-menu", self.show_popup_menu)
