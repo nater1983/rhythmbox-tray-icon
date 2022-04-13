@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 # coding=utf-8
 
-from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject, RB
+import gi
+gi.require_version('XApp', '1.0')
+from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject, RB, XApp
 import os
 import sys
 import math
@@ -22,7 +24,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         except (AttributeError, TypeError):
             return Gtk.StatusIcon.position_menu(self.menu, self.icon)
 
-    def show_popup_menu(self, icon, button, time, data = None):
+    def show_popup_menu(self, time):
         """
         Called when the icon is right clicked, displays the menu
         """
@@ -200,18 +202,15 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         return ("<span size='x-large' foreground='yellow'>" +
                 starString + "</span>")
 
-    def toggle_player_visibility(self, icon, event, data = None):
+    def toggle_player_visibility(self, *args):
         """
         Toggles visibility of Rhythmbox player
         """
-        if event.button == 1: # left button
-            if self.wind.get_visible():
-                self.wind.hide()
-            else:
-                self.wind.show()
-                self.wind.present()
-        elif event.button == 2: # middle button
-            self.player.do_next()
+        if self.wind.get_visible():
+            self.wind.hide()
+        else:
+            self.wind.show()
+            self.wind.present()
 
     def play(self, widget):
         """
@@ -251,13 +250,13 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.playing = playing
 
         if playing:
-            self.icon.set_from_file(self.play_icon)
+            self.icon.set_icon_name(self.play_icon)
             current_entry = self.shell.props.shell_player.get_playing_entry()
             self.set_tooltip_text(
                 current_entry.get_string(RB.RhythmDBPropType.ARTIST) +
                 " - " + current_entry.get_string(RB.RhythmDBPropType.TITLE))
         else:
-            self.icon.set_from_file(self.rhythmbox_icon)
+            self.icon.set_icon_name(self.rhythmbox_icon)
             self.set_tooltip_text()
 
     def set_tooltip_text(self, message=""):
@@ -283,14 +282,21 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.wind.connect("delete-event", self.hide_on_delete)
         self.create_popup_menu()
 
-        self.icon = Gtk.StatusIcon()
-        self.icon.set_from_file(self.rhythmbox_icon)
+        self.icon = XApp.StatusIcon()
+        self.icon.set_icon_name(self.rhythmbox_icon)
         self.icon.connect("scroll-event", self.on_scroll)
-        self.icon.connect("popup-menu", self.show_popup_menu)
-        self.icon.connect("button-press-event", self.toggle_player_visibility)
+        self.icon.connect("button-press-event", self.on_btn_press)
         self.player.connect("playing-changed", self.on_playing_changed)
 
         self.set_tooltip_text()
+
+    def on_btn_press(self, status_icon, x, y, button, time, panel_position):
+        if button == 1:    # left button
+            self.toggle_player_visibility()
+        elif button == 2:  # middle button
+            self.player.do_next()
+        elif button == 3:  # right button
+            self.show_popup_menu(time)
 
     def on_scroll(self, widget, event):
         """
@@ -310,7 +316,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
             vol = 1
 
         self.player.set_volume(vol)
-
 
     def do_deactivate(self):
         """
