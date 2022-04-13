@@ -1,19 +1,21 @@
 Rhythmbox tray icon plugin
 ==========================
 
-A tray icon to control basic Rhythmbox features. Requires Rhythmbox 2.9+.  Was working in Ubuntu 12.04, but is no longer maintained due to Ubuntu Panel restrictions.
+A tray icon to control basic Rhythmbox features.
 
 You can rate the track, play/pause, go previous, go next, or quit.
 
+This is fork from [mendhak/rhythmbox-tray-icon](https://github.com/mendhak/rhythmbox-tray-icon).
+
 ![Tray Icon](http://farm8.staticflickr.com/7232/7219610460_327356b800_o.png)
 
-Scroll up and down over the tray icon to adjust Rhythmbox's volume.
+Scroll up and down over the tray icon to adjust Rhythmbox's volume (doesn't work in Gnome 42).
 
 Click on the tray icon to show or hide the Rhythmbox window.
 
 The tray icon has a green 'play' overlay when a track is playing.
 
-When you hover over the icon, it shows the playing track:
+When you hover over the icon, it shows the playing track (doesn't work in Gnome 42):
 
 ![Hover Icon](http://farm9.staticflickr.com/8487/8214931320_8d99b85578_o.png)
 
@@ -23,10 +25,10 @@ How to install
 
 To install, run these commands in a terminal window:
 
-    wget https://github.com/mendhak/rhythmbox-tray-icon/raw/master/rhythmbox-tray-icon.zip
-    unzip -u rhythmbox-tray-icon.zip -d ~/.local/share/rhythmbox/plugins
+    wget https://github.com/vantu5z/rhythmbox-tray-icon/archive/refs/heads/master.zip
+    unzip -uj master.zip -d ~/.local/share/rhythmbox/plugins/tray_icon
 
-To do it manually, download [rhythmbox-tray-icon.zip](https://github.com/mendhak/rhythmbox-tray-icon/raw/master/rhythmbox-tray-icon.zip) and extract its contents into ~/.local/share/rhythmbox/plugins.
+To do it manually, download [ziped repo](https://github.com/vantu5z/rhythmbox-tray-icon/archive/refs/heads/master.zip) and extract its contents into ~/.local/share/rhythmbox/plugins/tray_icon.
 
 Start Rhythmbox.  Go to Edit > Plugins.
 
@@ -40,16 +42,17 @@ How to uninstall
 
 To uninstall, run this command in a terminal window:
 
-    rm ~/.local/share/rhythmbox/plugins/tray_*.*
+    rm -r ~/.local/share/rhythmbox/plugins/tray_icon
 
-It will remove the tray_* files from the plugins folder.
+It will remove the tray_icon folder from the plugins folder.
 
-Notes
+Dependencies
 ----------------
 
-On Ubuntu, you will need to allow applications in your systray
+[xapp](https://github.com/linuxmint/xapp)
 
-    gsettings set com.canonical.Unity.Panel systray-whitelist "['all']"
+[gnome-shell-extension-appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) (or similar, to enable tray icons in Gnome Shell)
 
-Heavily modified from [palfrey's original](https://github.com/palfrey/rhythmbox-tray-icon) plugin.
+In Arch Linux you can install it by:
 
+    pacman -S xapp gnome-shell-extension-appindicator
