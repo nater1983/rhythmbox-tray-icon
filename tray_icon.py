@@ -88,11 +88,11 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
     def get_title_menu_item(self):
         """
-        Gets a Gtk.ImageMenuItem with the current song's info
+        Gets a Gtk.MenuItem with the current song's info
         """
         current_entry = self.player.get_playing_entry()
         if current_entry is not None:
-            title_menu_item = Gtk.ImageMenuItem("")
+            title_menu_item = Gtk.MenuItem("")
             artist = current_entry.get_string(RB.RhythmDBPropType.ARTIST)
             album = current_entry.get_string(RB.RhythmDBPropType.ALBUM)
             title = current_entry.get_string(RB.RhythmDBPropType.TITLE)
