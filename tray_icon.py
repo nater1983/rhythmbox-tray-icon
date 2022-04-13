@@ -44,10 +44,13 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
         self.menu = Gtk.Menu()
 
-        menuitem_playpause = Gtk.MenuItem("► Play/Pause")
-        menuitem_next = Gtk.MenuItem("⏭ Next")
-        menuitem_prev = Gtk.MenuItem("⏮ Prev")
-        menuitem_quit = Gtk.MenuItem("⏏ Quit")
+        if self.playing:
+            menuitem_playpause = Gtk.MenuItem("⏯ " + _("Pause"))
+        else:
+            menuitem_playpause = Gtk.MenuItem("⏯ " + _("Play"))
+        menuitem_next = Gtk.MenuItem("⏭ " + _("Next"))
+        menuitem_prev = Gtk.MenuItem("⏮ " + _("Previous"))
+        menuitem_quit = Gtk.MenuItem("⏏ " + _("Quit Rhythmbox"))
 
         menuitem_playpause.connect("activate", self.play)
         menuitem_next.connect("activate", self.next)
