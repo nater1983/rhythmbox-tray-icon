@@ -43,6 +43,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
             self.set_menu_css()
 
         self.menu = Gtk.Menu()
+        self.menu.set_reserve_toggle_size(False)
 
         if self.playing:
             menuitem_playpause = Gtk.MenuItem("⏯ " + _("Pause"))
