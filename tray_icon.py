@@ -51,6 +51,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
 
         self.status_win.set_image()
         self.status_win.update_play_button_image(playing)
+        self.status_win.update_items()
 
     def set_tooltip_text(self, message=""):
         """
@@ -186,7 +187,10 @@ class StatusWindow(Gtk.Window):
         self.connect("draw", self.on_draw)
 
     def focus_changed(self, window, widget):
-        self.hide_window()
+        """
+        Hide window on lose focus.
+        """
+        self.hide()
 
     def set_image(self, player=None, stream_data=None, image=None):
         """
@@ -198,19 +202,25 @@ class StatusWindow(Gtk.Window):
                 image.scale_simple(70, 70, GdkPixbuf.InterpType.BILINEAR))
 
     def set_button_icon(self, widget, icon_name, size, tooltip):
+        """
+        Set button icon and tooltip.
+        """
         widget.set_image(Gtk.Image.new_from_pixbuf(
             self.icon_theme.load_icon(icon_name, size, 0)))
         widget.set_tooltip_text(_("tooltip"))
 
     def popup(self):
+        """
+        Show window.
+        """
         self.update_items()
         self.set_position(Gtk.WindowPosition.MOUSE)
         self.show_all()
 
-    def hide_window(self):
-        self.hide()
-
     def update_items(self):
+        if not self.get_visible():
+            return
+
         # updates title menu item with the current song's info.
         current_entry = self.player.get_playing_entry()
         if current_entry is not None:
@@ -229,9 +239,14 @@ class StatusWindow(Gtk.Window):
         self.star_value = self.get_song_rating()
         self.rating.set_markup(self.get_stars_markup(self.star_value, 5))
 
+        # shrink window
         self.resize(50, 50)
 
     def on_draw(self, widget, cr):
+        """
+        Handle "draw" event.
+        Prevent overlap to side screen.
+        """
         gdk_win = self.get_window()
         if gdk_win is not None:
             monitor = Gdk.Display.get_default().get_monitor_at_window(gdk_win)
@@ -321,7 +336,6 @@ class StatusWindow(Gtk.Window):
         Starts playing
         """
         self.player.playpause()
-        self.update_items()
 
     def update_play_button_image(self, playing):
         if playing:
@@ -337,7 +351,6 @@ class StatusWindow(Gtk.Window):
         Goes to next song
         """
         self.player.do_next()
-        self.update_items()
 
     def previous(self, widget):
         """
@@ -347,7 +360,6 @@ class StatusWindow(Gtk.Window):
             self.player.do_previous()
         except:
             pass
-        self.update_items()
 
     def quit(self, widget):
         """
