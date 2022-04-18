@@ -92,7 +92,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         elif button == 2:  # middle button
             self.player.do_next()
         elif button == 3:  # right button
-            self.status_win.popup()
+            self.status_win.popup(x, y)
 
     def on_scroll(self, status_icon, amount, direction, time):
         """
@@ -209,12 +209,14 @@ class StatusWindow(Gtk.Window):
             self.icon_theme.load_icon(icon_name, size, 0)))
         widget.set_tooltip_text(_("tooltip"))
 
-    def popup(self):
+    def popup(self, x, y):
         """
         Show window.
         """
+        # save icon position
+        self.x_pos = x
+        self.y_pos = y
         self.update_items()
-        self.set_position(Gtk.WindowPosition.MOUSE)
         self.show_all()
 
     def update_items(self):
@@ -244,16 +246,17 @@ class StatusWindow(Gtk.Window):
 
     def on_draw(self, widget, cr):
         """
-        Handle "draw" event.
+        Handle "draw" event. Try to center window on icon position.
         Prevent overlap to side screen.
         """
         gdk_win = self.get_window()
         if gdk_win is not None:
             monitor = Gdk.Display.get_default().get_monitor_at_window(gdk_win)
             scr_width = monitor.get_workarea().width
-            x, y = self.get_position()
-            if scr_width < (x + self.get_size().width):
-                self.move(scr_width - self.get_size().width, y)
+            if scr_width < (self.x_pos + self.get_size().width / 2):
+                self.move(scr_width - self.get_size().width, self.y_pos)
+            else:
+                self.move(self.x_pos - self.get_size().width / 2, self.y_pos)
 
     def get_song_rating(self):
         """
