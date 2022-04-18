@@ -49,6 +49,7 @@ class TrayIcon(GObject.Object, Peas.Activatable):
             self.icon.set_icon_name(self.rhythmbox_icon)
             self.set_tooltip_text()
 
+        self.status_win.set_image()
         self.status_win.update_play_button_image(playing)
 
     def set_tooltip_text(self, message=""):
@@ -136,7 +137,7 @@ class StatusWindow(Gtk.Window):
         self.album = Gtk.Label("Album")
         self.artist = Gtk.Label("Artist")
 
-        # pack Lable to EventBox to catch motion event
+        # pack Label to EventBox to catch motion event
         rating_event_box = Gtk.EventBox()
         self.rating = Gtk.Label()
         rating_event_box.add(self.rating)
@@ -182,11 +183,15 @@ class StatusWindow(Gtk.Window):
 
         self.player.get_property("player").connect("image", self.set_image)
         self.connect("focus-out-event", self.focus_changed)
+        self.connect("draw", self.on_draw)
 
     def focus_changed(self, window, widget):
         self.hide_window()
 
     def set_image(self, player=None, stream_data=None, image=None):
+        """
+        Set album image.
+        """
         if image is None:
             image = self.icon_theme.load_icon('image-missing', 64, 0)
         self.album_image.set_from_pixbuf(
@@ -206,8 +211,6 @@ class StatusWindow(Gtk.Window):
         self.hide()
 
     def update_items(self):
-        self.set_image()  # reset album image
-
         # updates title menu item with the current song's info.
         current_entry = self.player.get_playing_entry()
         if current_entry is not None:
@@ -225,6 +228,17 @@ class StatusWindow(Gtk.Window):
         # update stars menu with the current song's ratings in filled stars
         self.star_value = self.get_song_rating()
         self.rating.set_markup(self.get_stars_markup(self.star_value, 5))
+
+        self.resize(50, 50)
+
+    def on_draw(self, widget, cr):
+        gdk_win = self.get_window()
+        if gdk_win is not None:
+            monitor = Gdk.Display.get_default().get_monitor_at_window(gdk_win)
+            scr_width = monitor.get_workarea().width
+            x, y = self.get_position()
+            if scr_width < (x + self.get_size().width):
+                self.move(scr_width - self.get_size().width, y)
 
     def get_song_rating(self):
         """
@@ -263,7 +277,8 @@ class StatusWindow(Gtk.Window):
         if star_width == 0:
             return 0
         chosen = math.ceil((mouseX-label.get_layout_offsets()[0])/star_width)
-        chosen = 0 if chosen <= 0 else 5 if chosen >= 5 else chosen
+        # correct chosen to span: 0 <= vol <= 5
+        chosen = 0 if chosen < 0 else 5 if chosen > 5 else chosen
 
         return chosen
 
