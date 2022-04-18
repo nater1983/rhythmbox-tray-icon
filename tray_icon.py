@@ -224,9 +224,6 @@ class StatusWindow(Gtk.Window):
         """
         Update window items (song info).
         """
-        if not self.get_visible():
-            return
-
         # updates title menu item with the current song's info.
         current_entry = self.player.get_playing_entry()
         if current_entry is not None:
