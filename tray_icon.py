@@ -338,6 +338,9 @@ class StatusWindow(Gtk.Window):
         self.player.playpause()
 
     def update_play_button_image(self, playing):
+        """
+        Update play button icon and tooltip depending on playing status.
+        """
         if playing:
             icon_name = "media-pause"
             tooltip = _("Pause")
