@@ -32,6 +32,9 @@ class TrayIcon(GObject.Object, Peas.Activatable):
             self.wind.present()
 
     def hide_on_delete(self, widget, event):
+        """
+        Hide Rhythmbox on window close.
+        """
         self.wind.hide()
         return True # don't actually delete
 
@@ -151,8 +154,7 @@ class StatusWindow(Gtk.Window):
         self.play_pause_btn = Gtk.Button()
         self.update_play_button_image(False)
         self.next_btn = Gtk.Button()
-        self.set_button_icon(self.next_btn,
-                             "media-skip-forward", 24, _("Next"))
+        self.set_button_icon(self.next_btn, "media-skip-forward", 24, _("Next"))
         self.prev_btn = Gtk.Button()
         self.set_button_icon(self.prev_btn,
                              "media-skip-backward", 24, _("Previous"))
@@ -165,9 +167,7 @@ class StatusWindow(Gtk.Window):
         box.add(self.next_btn)
 
         quit_btn = Gtk.Button()
-        quit_btn.set_image(Gtk.Image.new_from_pixbuf(
-            self.icon_theme.load_icon("gnome-logout", 22, 0)))
-        quit_btn.set_tooltip_text(_("Quit Rhythmbox"))
+        self.set_button_icon(quit_btn, "gnome-logout", 22, _("Quit Rhythmbox"))
         quit_btn.connect("clicked", self.quit)
 
         grid = Gtk.Grid(column_spacing=5, row_spacing=5)
@@ -201,25 +201,28 @@ class StatusWindow(Gtk.Window):
         self.album_image.set_from_pixbuf(
                 image.scale_simple(70, 70, GdkPixbuf.InterpType.BILINEAR))
 
-    def set_button_icon(self, widget, icon_name, size, tooltip):
+    def set_button_icon(self, widget, icon_name, size, tooltip=""):
         """
         Set button icon and tooltip.
         """
         widget.set_image(Gtk.Image.new_from_pixbuf(
             self.icon_theme.load_icon(icon_name, size, 0)))
-        widget.set_tooltip_text(_("tooltip"))
+        widget.set_tooltip_text(tooltip)
 
     def popup(self, x, y):
         """
         Show window.
         """
-        # save icon position
+        # remember icon position
         self.x_pos = x
         self.y_pos = y
         self.update_items()
         self.show_all()
 
     def update_items(self):
+        """
+        Update window items (song info).
+        """
         if not self.get_visible():
             return
 
