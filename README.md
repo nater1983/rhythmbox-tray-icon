@@ -7,7 +7,7 @@ You can rate the track, play/pause, go previous, go next, or quit.
 
 This is fork from [mendhak/rhythmbox-tray-icon](https://github.com/mendhak/rhythmbox-tray-icon).
 
-![Tray Icon](http://farm8.staticflickr.com/7232/7219610460_327356b800_o.png)
+![Tray Icon](https://user-images.githubusercontent.com/8698003/163804315-da04932c-dd32-493a-85fd-c93b09df040c.png)
 
 Scroll up and down over the tray icon to adjust Rhythmbox's volume (doesn't work in Gnome 42).
 
