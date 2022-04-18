@@ -127,6 +127,7 @@ class StatusWindow(Gtk.Window):
         self.set_decorated(False)
         self.set_skip_taskbar_hint(True)
         self.set_keep_above(True)
+        self.set_border_width(5)
 
         self.icon_theme = Gtk.IconTheme.get_default()
 
