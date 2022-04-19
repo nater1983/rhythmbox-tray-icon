@@ -132,7 +132,8 @@ class StatusWindow(Gtk.Window):
 
         self.play_pause_btn = Gtk.Button()
         self.next_btn = Gtk.Button()
-        self.set_button_icon(self.next_btn, ["media-skip-forward"], 24, _("Next"))
+        self.set_button_icon(self.next_btn,
+                             ["media-skip-forward"], 24, _("Next"))
         self.prev_btn = Gtk.Button()
         self.set_button_icon(self.prev_btn,
                              ["media-skip-backward"], 24, _("Previous"))
@@ -146,7 +147,8 @@ class StatusWindow(Gtk.Window):
         self.update_play_button_image()
 
         quit_btn = Gtk.Button()
-        self.set_button_icon(quit_btn, ["gnome-logout", "exit"], 22, _("Quit Rhythmbox"))
+        self.set_button_icon(quit_btn,
+                             ["gnome-logout", "exit"], 22, _("Quit Rhythmbox"))
         quit_btn.connect("clicked", self.quit)
 
         grid = Gtk.Grid(column_spacing=5, row_spacing=5)
