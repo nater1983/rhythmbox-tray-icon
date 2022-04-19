@@ -198,9 +198,27 @@ class StatusWindow(Gtk.Window):
         Set album image.
         """
         if image is None:
-            image = self.icon_theme.load_icon('image-missing', 64, 0)
+            image = self.find_cover()
+            if image is None:
+                image = self.icon_theme.load_icon('image-missing', 64, 0)
         self.album_image.set_from_pixbuf(
                 image.scale_simple(70, 70, GdkPixbuf.InterpType.BILINEAR))
+
+    def find_cover(self):
+        """
+        Find album cover in AlbumArt plugin.
+        """
+        db_entry = self.player.get_playing_entry()
+        if db_entry is None:
+            return None
+        key = db_entry.create_ext_db_key(RB.RhythmDBPropType.ALBUM)
+        cover_db = RB.ExtDB(name='album-art')
+        art_location = cover_db.lookup(key)[0]
+        if art_location and os.path.exists(art_location):
+            if os.path.isfile(art_location):
+                cover_pixbuf = GdkPixbuf.Pixbuf.new_from_file(art_location)
+                return cover_pixbuf
+        return None
 
     def set_button_icon(self, widget, icon_name, size, tooltip=""):
         """
