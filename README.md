@@ -15,10 +15,6 @@ Click on the tray icon to show or hide the Rhythmbox window.
 
 The tray icon has a green 'play' overlay when a track is playing.
 
-When you hover over the icon, it shows the playing track (doesn't work in Gnome 42):
-
-![Hover Icon](http://farm9.staticflickr.com/8487/8214931320_8d99b85578_o.png)
-
 
 How to install
 -----------------
@@ -53,6 +49,6 @@ Dependencies
 
 [gnome-shell-extension-appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) (or similar, to enable tray icons in Gnome Shell)
 
-In Arch Linux you can install it by:
+In Arch Linux you can install them by:
 
     pacman -S xapp gnome-shell-extension-appindicator
