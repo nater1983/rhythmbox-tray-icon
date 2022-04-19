@@ -3,7 +3,7 @@
 
 import gi
 gi.require_version('XApp', '1.0')
-from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject, RB, XApp
+from gi.repository import Gtk, Gdk, GdkPixbuf, Peas, GObject, RB, XApp, GLib
 import os
 import sys
 import math
@@ -132,10 +132,10 @@ class StatusWindow(Gtk.Window):
 
         self.play_pause_btn = Gtk.Button()
         self.next_btn = Gtk.Button()
-        self.set_button_icon(self.next_btn, "media-skip-forward", 24, _("Next"))
+        self.set_button_icon(self.next_btn, ["media-skip-forward"], 24, _("Next"))
         self.prev_btn = Gtk.Button()
         self.set_button_icon(self.prev_btn,
-                             "media-skip-backward", 24, _("Previous"))
+                             ["media-skip-backward"], 24, _("Previous"))
         self.play_pause_btn.connect("clicked", self.play)
         self.next_btn.connect("clicked", self.next)
         self.prev_btn.connect("clicked", self.previous)
@@ -146,7 +146,7 @@ class StatusWindow(Gtk.Window):
         self.update_play_button_image()
 
         quit_btn = Gtk.Button()
-        self.set_button_icon(quit_btn, "gnome-logout", 22, _("Quit Rhythmbox"))
+        self.set_button_icon(quit_btn, ["gnome-logout", "exit"], 22, _("Quit Rhythmbox"))
         quit_btn.connect("clicked", self.quit)
 
         grid = Gtk.Grid(column_spacing=5, row_spacing=5)
@@ -211,12 +211,16 @@ class StatusWindow(Gtk.Window):
                 return cover_pixbuf
         return None
 
-    def set_button_icon(self, widget, icon_name, size, tooltip=""):
+    def set_button_icon(self, widget, icon_names, size, tooltip=""):
         """
         Set button icon and tooltip.
         """
-        widget.set_image(Gtk.Image.new_from_pixbuf(
-            self.icon_theme.load_icon(icon_name, size, 0)))
+        for icon_name in icon_names:
+            try:
+                icon_pixbuf = self.icon_theme.load_icon(icon_name, size, 0)
+            except GLib.Error:
+                continue
+            widget.set_image(Gtk.Image.new_from_pixbuf(icon_pixbuf))
         widget.set_tooltip_text(tooltip)
 
     def update_play_button_image(self):
@@ -225,10 +229,10 @@ class StatusWindow(Gtk.Window):
         """
         playing = self.player.get_property("playing")
         if playing:
-            icon_name = "media-pause"
+            icon_name = ["media-pause", "stock-media-pause"]
             tooltip = _("Pause")
         else:
-            icon_name = "media-play"
+            icon_name = ["media-play", "stock-media-play"]
             tooltip = _("Play")
         self.set_button_icon(self.play_pause_btn, icon_name, 32, tooltip)
 
