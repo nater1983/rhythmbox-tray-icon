@@ -21,52 +21,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.rhythmbox_icon = os.path.join(sys.path[0], "tray_stopped.png")
         self.play_icon = os.path.join(sys.path[0], "tray_playing.png")
 
-    def toggle_player_visibility(self, *args):
-        """
-        Toggles visibility of Rhythmbox player
-        """
-        if self.wind.get_visible():
-            self.wind.hide()
-        else:
-            self.wind.show()
-            self.wind.present()
-
-    def hide_on_delete(self, widget, event):
-        """
-        Hide Rhythmbox on window close.
-        """
-        self.wind.hide()
-        return True # don't actually delete
-
-    def on_playing_changed(self, player, playing):
-        """
-        Sets icon and tooltip when playing status changes
-        """
-        if playing:
-            self.icon.set_icon_name(self.play_icon)
-            current_entry = self.player.get_playing_entry()
-            self.set_tooltip_text(
-                current_entry.get_string(RB.RhythmDBPropType.ARTIST) +
-                " - " + current_entry.get_string(RB.RhythmDBPropType.TITLE))
-        else:
-            self.icon.set_icon_name(self.rhythmbox_icon)
-            self.set_tooltip_text()
-
-        self.status_win.set_image()
-        self.status_win.update_play_button_image(playing)
-        self.status_win.update_items()
-
-    def set_tooltip_text(self, message=""):
-        """
-        Sets tooltip to given message
-        """
-        prepend = ""
-        info = "(Scroll = volume, click = visibility, middle click = next)"
-        if message:
-            prepend = "\r\n"
-        tooltip_text = message + prepend + info
-        self.icon.set_tooltip_text(tooltip_text)
-
     def do_activate(self):
         """
         Called when the plugin is activated
@@ -84,7 +38,29 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         self.player.connect("playing-changed", self.on_playing_changed)
         self.wind.connect("delete-event", self.hide_on_delete)
 
-        self.set_tooltip_text()
+    def do_deactivate(self):
+        """
+        Called when plugin is deactivated
+        """
+        self.icon.set_visible(False)
+        del self.icon
+
+    def toggle_player_visibility(self, *args):
+        """
+        Toggles visibility of Rhythmbox player
+        """
+        if self.wind.get_visible():
+            self.wind.hide()
+        else:
+            self.wind.show()
+            self.wind.present()
+
+    def hide_on_delete(self, widget, event):
+        """
+        Hide Rhythmbox on window close.
+        """
+        self.wind.hide()
+        return True # don't actually delete
 
     def on_btn_press(self, status_icon, x, y, button, time, panel_position):
         """
@@ -96,6 +72,15 @@ class TrayIcon(GObject.Object, Peas.Activatable):
             self.player.do_next()
         elif button == 3:  # right button
             self.status_win.popup(x, y)
+
+    def on_playing_changed(self, player, playing):
+        """
+        Sets icon and tooltip when playing status changes.
+        """
+        if playing:
+            self.icon.set_icon_name(self.play_icon)
+        else:
+            self.icon.set_icon_name(self.rhythmbox_icon)
 
     def on_scroll(self, status_icon, amount, direction, time):
         """
@@ -111,13 +96,6 @@ class TrayIcon(GObject.Object, Peas.Activatable):
         vol = 0 if vol < 0 else 1 if vol > 1 else vol
 
         self.player.set_volume(vol)
-
-    def do_deactivate(self):
-        """
-        Called when plugin is deactivated
-        """
-        self.icon.set_visible(False)
-        del self.icon
 
 
 class StatusWindow(Gtk.Window):
@@ -153,7 +131,6 @@ class StatusWindow(Gtk.Window):
         self.star_value = -1
 
         self.play_pause_btn = Gtk.Button()
-        self.update_play_button_image(False)
         self.next_btn = Gtk.Button()
         self.set_button_icon(self.next_btn, "media-skip-forward", 24, _("Next"))
         self.prev_btn = Gtk.Button()
@@ -166,6 +143,7 @@ class StatusWindow(Gtk.Window):
         box.add(self.prev_btn)
         box.add(self.play_pause_btn)
         box.add(self.next_btn)
+        self.update_play_button_image()
 
         quit_btn = Gtk.Button()
         self.set_button_icon(quit_btn, "gnome-logout", 22, _("Quit Rhythmbox"))
@@ -184,8 +162,20 @@ class StatusWindow(Gtk.Window):
         self.add(grid)
 
         self.player.get_property("player").connect("image", self.set_image)
+        self.player.connect("playing-changed", self.update_items)
+
         self.connect("focus-out-event", self.focus_changed)
         self.connect("draw", self.on_draw)
+
+    def popup(self, x, y):
+        """
+        Show window.
+        """
+        # remember icon position
+        self.x_pos = x
+        self.y_pos = y
+        self.update_items()
+        self.show_all()
 
     def focus_changed(self, window, widget):
         """
@@ -199,8 +189,9 @@ class StatusWindow(Gtk.Window):
         """
         if image is None:
             image = self.find_cover()
-            if image is None:
-                image = self.icon_theme.load_icon('image-missing', 64, 0)
+        if image is None:
+            image = self.icon_theme.load_icon('image-missing', 64, 0)
+
         self.album_image.set_from_pixbuf(
                 image.scale_simple(70, 70, GdkPixbuf.InterpType.BILINEAR))
 
@@ -228,20 +219,29 @@ class StatusWindow(Gtk.Window):
             self.icon_theme.load_icon(icon_name, size, 0)))
         widget.set_tooltip_text(tooltip)
 
-    def popup(self, x, y):
+    def update_play_button_image(self):
         """
-        Show window.
+        Update play button icon and tooltip depending on playing status.
         """
-        # remember icon position
-        self.x_pos = x
-        self.y_pos = y
-        self.update_items()
-        self.show_all()
+        playing = self.player.get_property("playing")
+        if playing:
+            icon_name = "media-pause"
+            tooltip = _("Pause")
+        else:
+            icon_name = "media-play"
+            tooltip = _("Play")
+        self.set_button_icon(self.play_pause_btn, icon_name, 32, tooltip)
 
-    def update_items(self):
+        self.prev_btn.set_sensitive(self.player.get_property("has-prev"))
+        self.next_btn.set_sensitive(self.player.get_property("has-next"))
+
+    def update_items(self, player=None, playing=None):
         """
         Update window items (song info).
         """
+        self.set_image()
+        self.update_play_button_image()
+
         # updates title menu item with the current song's info.
         current_entry = self.player.get_playing_entry()
         if current_entry is not None:
@@ -277,6 +277,16 @@ class StatusWindow(Gtk.Window):
             else:
                 self.move(self.x_pos - self.get_size().width / 2, self.y_pos)
 
+    def on_star_click(self, widget, event):
+        """
+        Method called when stars are clicked on.
+        Determines chosen stars and sets song rating.
+        """
+        if self.star_value < 0:
+            return
+        self.star_value = self.get_chosen_stars(self.rating, event.x)
+        self.set_song_rating(self.star_value)
+
     def get_song_rating(self):
         """
         Gets the current song's user rating from Rhythmbox.
@@ -287,16 +297,6 @@ class StatusWindow(Gtk.Window):
             return int(current_entry.get_double(RB.RhythmDBPropType.RATING))
         else:
             return -1
-
-    def on_star_click(self, widget, event):
-        """
-        Method called when stars are clicked on.
-        Determines chosen stars and sets song rating.
-        """
-        if self.star_value < 0:
-            return
-        self.star_value = self.get_chosen_stars(self.rating, event.x)
-        self.set_song_rating(self.star_value)
 
     def set_song_rating(self, rating):
         """
@@ -358,18 +358,6 @@ class StatusWindow(Gtk.Window):
         Starts playing
         """
         self.player.playpause()
-
-    def update_play_button_image(self, playing):
-        """
-        Update play button icon and tooltip depending on playing status.
-        """
-        if playing:
-            icon_name = "media-pause"
-            tooltip = _("Pause")
-        else:
-            icon_name = "media-play"
-            tooltip = _("Play")
-        self.set_button_icon(self.play_pause_btn, icon_name, 32, tooltip)
 
     def next(self, widget):
         """
