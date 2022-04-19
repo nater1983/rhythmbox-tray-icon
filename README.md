@@ -21,8 +21,9 @@ How to install
 
 To install, run these commands in a terminal window:
 
-    wget https://github.com/vantu5z/rhythmbox-tray-icon/archive/refs/heads/master.zip
-    unzip -uj master.zip -d ~/.local/share/rhythmbox/plugins/tray_icon
+    git clone https://github.com/vantu5z/rhythmbox-tray-icon.git
+    cd rhythmbox-tray-icon
+    ./install.sh
 
 To do it manually, download [ziped repo](https://github.com/vantu5z/rhythmbox-tray-icon/archive/refs/heads/master.zip) and extract its contents into ~/.local/share/rhythmbox/plugins/tray_icon.
 
